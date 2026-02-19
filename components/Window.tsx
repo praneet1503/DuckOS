@@ -34,25 +34,67 @@ export default function Window({ win }: WindowProps) {
   useEffect(() => {
     posRef.current = win.position;
   }, [win.position]);
+  // Smooth transform-based drag using requestAnimationFrame for fluid motion.
+  // use the existing inner constraintsRef for applying transforms (avoids framer-motion conflicts)
+  const dragTargetRef = useRef({ x: 0, y: 0 });
+  const currentOffsetRef = useRef({ x: 0, y: 0 });
+  const dragStartRef = useRef({ x: 0, y: 0 });
+  const rafRef = useRef<number | null>(null);
 
-  // Pointer-based drag: snap title-bar to cursor on pointerdown and follow continuously
+  // animate current offset (which is a translation relative to the window's start position)
+  const animateToTarget = useCallback(() => {
+    const current = currentOffsetRef.current;
+    const target = dragTargetRef.current;
+    const ease = 0.22;
+    const nx = current.x + (target.x - current.x) * ease;
+    const ny = current.y + (target.y - current.y) * ease;
+    currentOffsetRef.current = { x: nx, y: ny };
+    if (constraintsRef.current) {
+      constraintsRef.current.style.transform = `translate(${nx}px, ${ny}px)`;
+      constraintsRef.current.style.willChange = "transform";
+    }
+
+    const dx = Math.abs(target.x - nx);
+    const dy = Math.abs(target.y - ny);
+    if (dx > 0.5 || dy > 0.5) {
+      rafRef.current = requestAnimationFrame(animateToTarget);
+    } else {
+      // snap to target (translation)
+      if (constraintsRef.current) constraintsRef.current.style.transform = `translate(${target.x}px, ${target.y}px)`;
+      currentOffsetRef.current = { x: target.x, y: target.y };
+      rafRef.current = null;
+    }
+  }, []);
+
   const onPointerMove = useCallback(
-    (e: PointerEvent) => {
-      if (!draggingRef.current) return;
-      const titleRect = titleRef.current?.getBoundingClientRect();
-      const dx = titleRect ? titleRect.width / 2 : 0;
-      const dy = titleRect ? titleRect.height / 2 : 0;
-      updateWindowPosition(win.id, { x: e.clientX - dx, y: e.clientY - dy });
+    (e: PointerEvent, dx?: number, dy?: number) => {
+      // compute desired absolute target position (where window's top-left should be)
+      const desiredX = (dx ?? 0) + e.clientX;
+      const desiredY = (dy ?? 0) + e.clientY;
+      // convert to translation relative to dragStart (start window top-left)
+      const relX = desiredX - dragStartRef.current.x;
+      const relY = desiredY - dragStartRef.current.y;
+      dragTargetRef.current = { x: relX, y: relY };
+      if (rafRef.current == null) rafRef.current = requestAnimationFrame(animateToTarget);
     },
-    [win.id, updateWindowPosition]
+    [animateToTarget]
   );
 
   const onPointerUp = useCallback(() => {
-    if (!draggingRef.current) return;
-    draggingRef.current = false;
+    // commit final position (start + current translation) and clear transform
+    const finalRel = dragTargetRef.current;
+    const finalX = Math.round(dragStartRef.current.x + finalRel.x);
+    const finalY = Math.round(dragStartRef.current.y + finalRel.y);
+    if (constraintsRef.current) constraintsRef.current.style.transform = "";
+    currentOffsetRef.current = { x: 0, y: 0 };
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    updateWindowPosition(win.id, { x: finalX, y: finalY });
     window.removeEventListener("pointermove", onPointerMove, true);
     window.removeEventListener("pointerup", onPointerUp, true);
-  }, [onPointerMove]);
+  }, [onPointerMove, updateWindowPosition, win.id]);
 
   const handleTitlePointerDown = useCallback(
     (e: React.PointerEvent) => {
@@ -61,22 +103,32 @@ export default function Window({ win }: WindowProps) {
 
       if (win.isMaximized) return;
 
-      // start snapping the title to the cursor
       const rect = titleRef.current?.getBoundingClientRect();
-      const dx = rect ? rect.width / 2 : 0;
+      const dx = rect ? rect.width / 2 : 0; // we want the title centered under pointer -> desired window x = clientX - dx
       const dy = rect ? rect.height / 2 : 0;
 
-      // move immediately so the title/tab centers under the pointer
-      updateWindowPosition(win.id, { x: e.clientX - dx, y: e.clientY - dy });
+      const start = posRef.current; // window's current top-left
+      // set drag start
+      dragStartRef.current = { x: start.x, y: start.y };
+      // compute desired absolute position where window top-left should move to so title centers under cursor
+      const desiredX = e.clientX - dx;
+      const desiredY = e.clientY - dy;
+      // compute translation relative to start
+      dragTargetRef.current = { x: desiredX - start.x, y: desiredY - start.y };
+      currentOffsetRef.current = { x: 0, y: 0 };
 
-      draggingRef.current = true;
-      // capture global moves
-      window.addEventListener("pointermove", onPointerMove, true);
-      window.addEventListener("pointerup", onPointerUp, true);
-      // prevent text selection
+      if (constraintsRef.current) {
+        // set transform to zero-based at start position
+        constraintsRef.current.style.transform = `translate(0px, 0px)`;
+      }
+
+      // begin listening globally
+      window.addEventListener("pointermove", onPointerMove as EventListener, true);
+      window.addEventListener("pointerup", onPointerUp as EventListener, true);
+      if (rafRef.current == null) rafRef.current = requestAnimationFrame(animateToTarget);
       (e.target as Element).setPointerCapture?.(e.pointerId);
     },
-    [focusWindow, isFocused, onPointerMove, onPointerUp, updateWindowPosition, win.id, win.isMaximized]
+    [animateToTarget, focusWindow, isFocused, onPointerMove, onPointerUp, win.id, win.isMaximized]
   );
 
   const handlePointerDown = useCallback(() => {
