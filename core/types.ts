@@ -54,6 +54,8 @@ export interface OSState {
   focusedWindowId: string | null;
   registeredApps: AppDefinition[];
   zIndexCounter: number;
+  /** Monotonic sequence to ensure unique window ids when opened rapidly */
+  nextWindowSeq: number;
 }
 
 // ── OS actions (store methods) ──────────────────────────────

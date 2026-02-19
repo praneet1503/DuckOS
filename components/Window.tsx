@@ -26,6 +26,8 @@ export default function Window({ win }: WindowProps) {
   const app = getAppById(win.appId);
 
   const constraintsRef = useRef<HTMLDivElement | null>(null);
+  const titleRef = useRef<HTMLDivElement | null>(null);
+  const draggingRef = useRef(false);
 
   // Stable position ref to avoid re-renders on every drag tick
   const posRef = useRef(win.position);
@@ -33,14 +35,48 @@ export default function Window({ win }: WindowProps) {
     posRef.current = win.position;
   }, [win.position]);
 
-  const handleDragEnd = useCallback(
-    (_: unknown, info: PanInfo) => {
-      updateWindowPosition(win.id, {
-        x: posRef.current.x + info.offset.x,
-        y: posRef.current.y + info.offset.y,
-      });
+  // Pointer-based drag: snap title-bar to cursor on pointerdown and follow continuously
+  const onPointerMove = useCallback(
+    (e: PointerEvent) => {
+      if (!draggingRef.current) return;
+      const titleRect = titleRef.current?.getBoundingClientRect();
+      const dx = titleRect ? titleRect.width / 2 : 0;
+      const dy = titleRect ? titleRect.height / 2 : 0;
+      updateWindowPosition(win.id, { x: e.clientX - dx, y: e.clientY - dy });
     },
     [win.id, updateWindowPosition]
+  );
+
+  const onPointerUp = useCallback(() => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    window.removeEventListener("pointermove", onPointerMove, true);
+    window.removeEventListener("pointerup", onPointerUp, true);
+  }, [onPointerMove]);
+
+  const handleTitlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      // focus first
+      if (!isFocused) focusWindow(win.id);
+
+      if (win.isMaximized) return;
+
+      // start snapping the title to the cursor
+      const rect = titleRef.current?.getBoundingClientRect();
+      const dx = rect ? rect.width / 2 : 0;
+      const dy = rect ? rect.height / 2 : 0;
+
+      // move immediately so the title/tab centers under the pointer
+      updateWindowPosition(win.id, { x: e.clientX - dx, y: e.clientY - dy });
+
+      draggingRef.current = true;
+      // capture global moves
+      window.addEventListener("pointermove", onPointerMove, true);
+      window.addEventListener("pointerup", onPointerUp, true);
+      // prevent text selection
+      (e.target as Element).setPointerCapture?.(e.pointerId);
+    },
+    [focusWindow, isFocused, onPointerMove, onPointerUp, updateWindowPosition, win.id, win.isMaximized]
   );
 
   const handlePointerDown = useCallback(() => {
@@ -89,11 +125,9 @@ export default function Window({ win }: WindowProps) {
       >
         {/* ── Title bar ───────────────────────────── */}
         <motion.div
+          ref={titleRef}
+          onPointerDown={handleTitlePointerDown}
           className="flex h-10 shrink-0 cursor-grab items-center justify-between px-3 active:cursor-grabbing"
-          drag={!win.isMaximized}
-          dragMomentum={false}
-          dragElastic={0}
-          onDragEnd={handleDragEnd}
           // prevent text selection while dragging
           style={{ userSelect: "none" }}
         >
@@ -116,7 +150,12 @@ export default function Window({ win }: WindowProps) {
             />
           </div>
 
-          <span className="text-xs font-medium text-white/50">{app.name}</span>
+          <span
+            className="text-xs font-medium text-white/50 select-none pointer-events-none"
+            style={{ WebkitUserSelect: "none" as any, userSelect: "none" }}
+          >
+            {app.name}
+          </span>
 
           {/* Spacer to balance the title */}
           <div className="w-[52px]" />

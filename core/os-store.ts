@@ -22,6 +22,7 @@ export const useOSStore = create<OSState & OSActions>()((set, get) => ({
   focusedWindowId: null,
   registeredApps: [],
   zIndexCounter: 1,
+  nextWindowSeq: 0,
 
   // ── boot ────────────────────────────────────────────────
   boot: () => set({ isBooted: true }),
@@ -44,8 +45,10 @@ export const useOSStore = create<OSState & OSActions>()((set, get) => ({
     const { zIndexCounter, openWindows } = get();
     const nextZ = zIndexCounter + 1;
 
+    const nextSeq = get().nextWindowSeq + 1;
+
     const instance: WindowInstance = {
-      id: `${appId}-${Date.now()}`,
+      id: `${appId}-${Date.now()}-${nextSeq}`,
       appId,
       position: getSpawnPosition(openWindows),
       size: { ...app.defaultSize },
@@ -58,6 +61,7 @@ export const useOSStore = create<OSState & OSActions>()((set, get) => ({
       openWindows: [...openWindows, instance],
       focusedWindowId: instance.id,
       zIndexCounter: nextZ,
+      nextWindowSeq: nextSeq,
     });
   },
 

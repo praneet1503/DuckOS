@@ -9,6 +9,8 @@ import {
 import { PondApp, PondIcon } from "@/apps/pond";
 import { NestApp, NestIcon } from "@/apps/nest";
 import { FeatherApp, FeatherIcon } from "@/apps/feather";
+import { FlightApp, FlightIcon } from "@/apps/flight";
+import { EchoApp, EchoIcon } from "@/apps/echo";
 import BootScreen from "@/components/BootScreen";
 import Desktop from "@/components/Desktop";
 
@@ -35,6 +37,22 @@ registerApp({
   icon: FeatherIcon,
   defaultSize: { width: 650, height: 400 },
   component: FeatherApp,
+});
+
+registerApp({
+  id: "flight",
+  name: "Flight",
+  icon: FlightIcon,
+  defaultSize: { width: 520, height: 360 },
+  component: FlightApp,
+});
+
+registerApp({
+  id: "echo",
+  name: "Echo",
+  icon: EchoIcon,
+  defaultSize: { width: 520, height: 420 },
+  component: EchoApp,
 });
 
 /**
