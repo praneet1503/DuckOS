@@ -22,27 +22,37 @@ export default function Background() {
 
   return (
     <>
-      {/* Base animated gradient */}
+      {/* Full-bleed background image (guaranteed to render) */}
+      <img
+        src="/backgrounds/duck-pond.jpg"
+        alt="Duck pond background"
+        className="pointer-events-none fixed inset-0 w-full h-full object-cover"
+        style={{ zIndex: -30 }}
+      />
+
+      {/* Base animated gradient overlay */}
       <motion.div
-        className="pointer-events-none fixed inset-0 -z-20"
+        className="pointer-events-none fixed inset-0"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2 }}
         style={{
-          backgroundImage: "url('/backgrounds/duck-pond.jpg'), linear-gradient(135deg, #0b0e14 0%, #111820 40%, #0f1923 70%, #0b0e14 100%)",
-          backgroundSize: "cover, 400% 400%",
-          backgroundPosition: "center, 0% 50%",
-          backgroundRepeat: "no-repeat, no-repeat",
-          backgroundBlendMode: "overlay",
-          filter: "brightness(0.86) saturate(0.95)",
+          zIndex: -20,
+          background: "linear-gradient(135deg, rgba(11,14,20,0.18) 0%, rgba(17,24,32,0.16) 40%, rgba(15,25,35,0.14) 70%, rgba(11,14,20,0.16) 100%)",
+          backgroundSize: "400% 400%",
+          backgroundPosition: "0% 50%",
+          backgroundRepeat: "no-repeat",
           animation: "bgShift 20s ease infinite",
+          mixBlendMode: "overlay",
+          filter: "brightness(0.9) saturate(0.98)",
         }}
       />
 
       {/* Cursor-following radial highlight */}
       <div
         ref={radialRef}
-        className="pointer-events-none fixed inset-0 -z-10 transition-opacity duration-300"
+        className="pointer-events-none fixed inset-0 transition-opacity duration-300"
+        style={{ zIndex: -10 }}
       />
     </>
   );

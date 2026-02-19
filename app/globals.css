@@ -32,7 +32,7 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background: var(--os-bg);
+  background: transparent;
   color: var(--os-text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;

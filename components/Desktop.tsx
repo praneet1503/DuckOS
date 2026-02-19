@@ -25,7 +25,7 @@ export default function Desktop() {
 
   return (
     <div
-      className="relative h-screen w-screen overflow-hidden bg-[#0b0e14]"
+      className="relative h-screen w-screen overflow-hidden bg-transparent"
       onClick={handleDesktopClick}
     >
       <Background />
