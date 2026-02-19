@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/* ── Duck OS Design Tokens ─────────────────────────────── */
+
+:root {
+  --os-bg: #0b0e14;
+  --os-surface: rgba(255, 255, 255, 0.06);
+  --os-border: rgba(255, 255, 255, 0.1);
+  --os-accent-amber: #d9b06a;
+  --os-accent-teal: #5eaeb5;
+  --os-text-primary: rgba(255, 255, 255, 0.85);
+  --os-text-secondary: rgba(255, 255, 255, 0.5);
+  --font-sans: var(--font-inter);
+}
+
+@theme inline {
+  --color-background: var(--os-bg);
+  --color-foreground: var(--os-text-primary);
+  --font-sans: var(--font-inter);
+}
+
+/* ── Base ──────────────────────────────────────────────── */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--os-bg);
+  color: var(--os-text-primary);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Background gradient animation ─────────────────────── */
+
+@keyframes bgShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Scrollbar (used inside window content areas) ──────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Utility: disable user-select on OS chrome ─────────── */
+.os-chrome {
+  -webkit-user-select: none;
+  user-select: none;
+}
