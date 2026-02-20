@@ -158,22 +158,28 @@ export default function Window({ win }: WindowProps) {
           style={{ userSelect: "none" }}
         >
           {/* Traffic lights */}
-          <div className="flex items-center gap-1.75">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => closeWindow(win.id)}
-              className="h-3 w-3 rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80"
+              className="relative flex h-4 w-4 items-center justify-center rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80"
               aria-label="Close"
-            />
+            >
+              <span className="text-[8px] font-bold text-black leading-none">×</span>
+            </button>
             <button
               onClick={() => minimizeWindow(win.id)}
-              className="h-3 w-3 rounded-full bg-[#febc2e] transition-opacity hover:opacity-80"
+              className="relative flex h-4 w-4 items-center justify-center rounded-full bg-[#febc2e] transition-opacity hover:opacity-80"
               aria-label="Minimize"
-            />
+            >
+              <span className="text-[8px] font-bold text-black leading-none">–</span>
+            </button>
             <button
               onClick={() => toggleMaximizeWindow(win.id)}
-              className="h-3 w-3 rounded-full bg-[#28c840] transition-opacity hover:opacity-80"
+              className="relative flex h-4 w-4 items-center justify-center rounded-full bg-[#28c840] transition-opacity hover:opacity-80"
               aria-label="Maximize"
-            />
+            >
+              <span className="text-[8px] font-bold text-black leading-none">+</span>
+            </button>
           </div>
 
           <span

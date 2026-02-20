@@ -4,8 +4,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { parseCommand, type CommandResponse } from "./command-parser";
 import { useOSStore } from "@/core/os-store";
-
-const prompt = "duck@feather:~$";
+import { initFileSystem } from "@/core/vfs";
 
 type TerminalLine = {
   id: string;
@@ -25,7 +24,20 @@ export default function FeatherApp() {
   const [inputValue, setInputValue] = useState("");
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const [currentPath, setCurrentPath] = useState("/home");
+  const [processing, setProcessing] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const currentPathRef = useRef(currentPath);
+
+  // Keep ref in sync for async handlers
+  useEffect(() => {
+    currentPathRef.current = currentPath;
+  }, [currentPath]);
+
+  // Init VFS on mount
+  useEffect(() => {
+    initFileSystem();
+  }, []);
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -34,29 +46,29 @@ export default function FeatherApp() {
     }
   }, [lines]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!inputValue.trim()) {
-      return;
-    }
+  const prompt = `duck@feather:${currentPath}$`;
 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!inputValue.trim() || processing) return;
+
+    setProcessing(true);
     const store = useOSStore.getState();
-    const response: CommandResponse = parseCommand(inputValue, {
+    const response: CommandResponse = await parseCommand(inputValue, {
+      openWindows: store.openWindows.map((w) => ({ id: w.id, appId: w.appId })),
       openWindowsCount: store.openWindows.length,
       focusedWindowId: store.focusedWindowId,
+      currentPath: currentPathRef.current,
     });
 
     setLines((prev) => {
-      if (response.clear) {
-        return [];
-      }
+      if (response.clear) return [];
 
       const nextLines: TerminalLine[] = [
         ...prev,
-        createLine("input", inputValue),
+        createLine("input", `${prompt} ${inputValue}`),
         ...response.lines.map((payload) => createLine(payload.type, payload.content)),
       ];
-
       return nextLines;
     });
 
@@ -64,11 +76,29 @@ export default function FeatherApp() {
       store.openApp(response.openAppId);
     }
 
+    if (response.closeWindowId) {
+      store.closeWindow(response.closeWindowId);
+    }
+    if (response.closeAppId) {
+      if (response.closeAppId === "all") {
+        store.openWindows.forEach((w) => store.closeWindow(w.id));
+      } else {
+        // close all windows matching this app id
+        const toClose = store.openWindows.filter((w) => w.appId === response.closeAppId);
+        toClose.forEach((w) => store.closeWindow(w.id));
+      }
+    }
+
+    if (response.newPath) {
+      setCurrentPath(response.newPath);
+    }
+
     const updatedHistory = [...commandHistory, inputValue];
     setCommandHistory(updatedHistory);
     setHistoryIndex(updatedHistory.length);
 
     setInputValue("");
+    setProcessing(false);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -110,7 +140,7 @@ export default function FeatherApp() {
                     : "text-white/80"
               }`}
             >
-              {line.type === "input" ? `${prompt} ${line.content}` : line.content}
+              {line.content}
             </div>
           ))}
         </div>
@@ -118,7 +148,7 @@ export default function FeatherApp() {
 
       <form className="border-t border-white/10 px-4 py-3" onSubmit={handleSubmit}>
         <div className="flex items-center gap-2 font-mono text-sm text-white/60">
-          <span className="text-amber-300">{prompt}</span>
+          <span className="shrink-0 text-amber-300">{prompt}</span>
           <input
             autoFocus
             spellCheck="false"
@@ -127,6 +157,7 @@ export default function FeatherApp() {
             value={inputValue}
             onChange={(event) => setInputValue(event.target.value)}
             onKeyDown={handleKeyDown}
+            disabled={processing}
           />
         </div>
       </form>
