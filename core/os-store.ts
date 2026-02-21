@@ -7,7 +7,7 @@ import type {
   WindowSize,
 } from "./types";
 import { getAppById } from "./app-registry";
-import { getSpawnPosition } from "./window-manager";
+import { getSpawnPosition, clampPosition } from "./window-manager";
 
 /**
  * Central OS store – the "kernel" of Duck OS.
@@ -102,11 +102,23 @@ export const useOSStore = create<OSState & OSActions>()((set, get) => ({
     })),
 
   updateWindowPosition: (windowId: string, position: WindowPosition) =>
-    set((s) => ({
-      openWindows: s.openWindows.map((w) =>
-        w.id === windowId ? { ...w, position } : w
-      ),
-    })),
+    set((s) => {
+      let pos = position;
+      if (typeof window !== "undefined") {
+        const w = s.openWindows.find((w) => w.id === windowId);
+        if (w) {
+          pos = clampPosition(position, w.size, {
+            width: window.innerWidth,
+            height: window.innerHeight,
+          });
+        }
+      }
+      return {
+        openWindows: s.openWindows.map((w) =>
+          w.id === windowId ? { ...w, position: pos } : w
+        ),
+      };
+    }),
 
   updateWindowSize: (windowId: string, size: WindowSize) =>
     set((s) => ({
