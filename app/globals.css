@@ -69,11 +69,20 @@ body {
 }
 
 /* ── Global window layer (portal mount) ────────────────── */
+/* Window layer: contains composited windows. We allow pointer events
+   on the layer so child windows can receive events reliably. Clicks
+   on the empty area are handled in the host (see WindowLayer) to
+   clear focus. */
 #window-layer {
   position: fixed;
   inset: 0;
-  pointer-events: none;
+  pointer-events: auto;
   z-index: 10000;
   /* Prevent this layer from participating in layout */
   overflow: visible;
+}
+
+/* Ensure individual windows explicitly accept pointer events */
+.window-shell {
+  pointer-events: auto;
 }

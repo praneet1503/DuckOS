@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
 import { useOSStore } from "@/core/os-store";
 import Background from "./Background";
 import WindowLayer from "./WindowLayer";
@@ -14,6 +15,11 @@ import Dock from "./Dock";
  */
 export default function Desktop() {
   const openWindows = useOSStore((s) => s.openWindows);
+
+  // debug logging
+  useEffect(() => {
+    console.log("openWindows updated", openWindows);
+  }, [openWindows]);
   const clearFocus = useOSStore((s) => s.clearFocus);
 
   function handleDesktopClick(e: React.MouseEvent<HTMLDivElement>) {
@@ -30,10 +36,18 @@ export default function Desktop() {
     >
       <Background />
 
+      {/* debug square */}
+      <div style={{position:'fixed',top:20,left:20,width:100,height:100,background:'rgba(255,0,0,0.5)',zIndex:11000}} />
+
       {/* Window layer portal (isolated from desktop layout) */}
       <WindowLayer />
 
       <Dock />
+
+      {/* DEBUG: list open windows */}
+      <div className="pointer-events-none fixed bottom-2 right-2 rounded bg-black/50 p-2 text-[10px] text-white/60">
+        <pre className="whitespace-pre-wrap">{JSON.stringify(openWindows, null, 2)}</pre>
+      </div>
     </div>
   );
 }

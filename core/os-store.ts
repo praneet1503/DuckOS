@@ -7,7 +7,7 @@ import type {
   WindowSize,
 } from "./types";
 import { getAppById } from "./app-registry";
-import { getSpawnPosition, clampPosition } from "./window-manager";
+import { getSpawnPosition, clampPosition, CASCADE } from "./window-manager";
 
 /**
  * Central OS store – the "kernel" of Duck OS.
@@ -36,6 +36,7 @@ export const useOSStore = create<OSState & OSActions>()((set, get) => ({
 
   // ── app lifecycle ───────────────────────────────────────
   openApp: (appId) => {
+    console.log("os-store.openApp", appId);
     const app = getAppById(appId);
     if (!app) {
       console.warn(`[os-store] Unknown app "${appId}"`);
@@ -47,10 +48,23 @@ export const useOSStore = create<OSState & OSActions>()((set, get) => ({
 
     const nextSeq = get().nextWindowSeq + 1;
 
+    // start windows roughly in the center of the viewport, cascading slightly
+    let spawn = getSpawnPosition(openWindows);
+    if (typeof window !== "undefined") {
+      const offset = CASCADE * (openWindows.length % 10);
+      spawn = {
+        x: window.innerWidth / 2 - app.defaultSize.width / 2 + offset,
+        y: window.innerHeight / 2 - app.defaultSize.height / 2 + offset,
+      };
+      spawn = clampPosition(spawn, app.defaultSize, {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
     const instance: WindowInstance = {
       id: `${appId}-${Date.now()}-${nextSeq}`,
       appId,
-      position: getSpawnPosition(openWindows),
+      position: spawn,
       size: { ...app.defaultSize },
       zIndex: nextZ,
       isMinimized: false,

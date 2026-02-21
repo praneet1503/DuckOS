@@ -90,6 +90,7 @@ export function useDrag({ onDragEnd, getPosition, disabled }: DragCallbacks) {
     (e: React.PointerEvent) => {
       if (disabled) return;
       if (e.button !== 0) return; // left-click only
+      e.preventDefault();
 
       const pos = getPosition();
       const d = drag.current;
@@ -111,6 +112,7 @@ export function useDrag({ onDragEnd, getPosition, disabled }: DragCallbacks) {
 
       window.addEventListener("pointermove", onPointerMove, true);
       window.addEventListener("pointerup", onPointerUp, true);
+      window.addEventListener("pointercancel", onPointerUp, true);
 
       // Capture so we keep getting events even if the pointer leaves the element
       (e.target as Element).setPointerCapture?.(e.pointerId);

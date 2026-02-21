@@ -18,6 +18,7 @@ interface WindowProps {
  * Each window is position:fixed inside the global WindowLayer portal.
  */
 function WindowInner({ win }: WindowProps) {
+  console.log("Rendering window", win.id, win.appId, win.position);
   const closeWindow = useOSStore((s) => s.closeWindow);
   const focusWindow = useOSStore((s) => s.focusWindow);
   const minimizeWindow = useOSStore((s) => s.minimizeWindow);
@@ -92,8 +93,10 @@ function WindowInner({ win }: WindowProps) {
         zIndex: win.zIndex,
         transform: `translate3d(${posX}px, ${posY}px, 0)`,
         pointerEvents: "auto",
+        outline: "2px solid lime",
       }}
       initial={{ opacity: 0, scale: 0.96 }}
+
       animate={{
         opacity: win.isMinimized ? 0 : 1,
         scale: win.isMinimized ? 0.92 : 1,

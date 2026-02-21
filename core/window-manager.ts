@@ -8,10 +8,10 @@ import type { WindowInstance, WindowPosition } from "./types";
  */
 
 /** Base offset from top-left for the first spawned window. */
-const BASE_X = 120;
-const BASE_Y = 80;
+export const BASE_X = 120;
+export const BASE_Y = 80;
 /** Cascade step per open window. */
-const CASCADE = 28;
+export const CASCADE = 28;
 
 /**
  * Return a spawn position that cascades from existing windows
@@ -33,9 +33,10 @@ export function clampPosition(
   size: { width: number; height: number },
   viewport: { width: number; height: number }
 ): WindowPosition {
-  const TITLE_BAR = 60;
-  return {
-    x: Math.max(-size.width + TITLE_BAR, Math.min(pos.x, viewport.width - TITLE_BAR)),
-    y: Math.max(0, Math.min(pos.y, viewport.height - TITLE_BAR)),
-  };
+  // Clamp so entire window rectangle stays within the visible viewport.
+  // This prevents new windows from spawning off-screen and ensures
+  // dragged windows cannot permanently disappear.
+  const x = Math.max(0, Math.min(pos.x, viewport.width - size.width));
+  const y = Math.max(0, Math.min(pos.y, viewport.height - size.height));
+  return { x, y };
 }
