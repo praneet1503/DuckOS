@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 import { useOSStore } from "@/core/os-store";
 import { getAppById } from "@/core/app-registry";
 import { useDrag } from "@/hooks/useDrag";
-import type { WindowInstance } from "@/core/types";import { clampPosition } from "@/core/window-manager";
+import type { WindowInstance } from "@/core/types";
+import { clampPosition } from "@/core/window-manager";
 interface WindowProps {
   win: WindowInstance;
 }
