@@ -43,7 +43,7 @@ export default function QuackCodeIcon({ className }: { className?: string }) {
         opacity="0.7"
         fontSize="5.5"
         fontWeight="700"
-        fontFamily="monospace"
+        fontFamily="'JetBrains Mono', monospace"
       >
         {"</>"}
       </text>

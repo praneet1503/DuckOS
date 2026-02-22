@@ -1,8 +1,49 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════
+   Duck OS — Self-hosted Fonts
+   ─────────────────────────────────────────────────────────
+   Inter Variable        → system UI (weights 400–700)
+   JetBrains Mono Var    → code / terminal only
+   Files live in /public/fonts  •  Only latin subset loaded
+   ═══════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter-Variable-Italic.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Variable.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Variable-Italic.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* ── Duck OS Design Tokens ─────────────────────────────── */
 
 :root {
+  /* ── Color tokens ───────────────────────────────────── */
   --os-bg: #0b0e14;
   --os-surface: rgba(255, 255, 255, 0.06);
   --os-border: rgba(255, 255, 255, 0.1);
@@ -10,13 +51,34 @@
   --os-accent-teal: #5eaeb5;
   --os-text-primary: rgba(255, 255, 255, 0.85);
   --os-text-secondary: rgba(255, 255, 255, 0.5);
-  --font-sans: var(--font-inter);
+
+  /* ── Font stacks ────────────────────────────────────── */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Monaco,
+    "Courier New", monospace;
+
+  /* ── Typography scale ───────────────────────────────── */
+  --type-base: 14px;
+  --type-sm: 12px;
+  --type-xs: 11px;
+  --type-lg: 16px;
+  --type-xl: 20px;
+
+  /* ── Font-weight aliases ────────────────────────────── */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
 }
 
 @theme inline {
   --color-background: var(--os-bg);
   --color-foreground: var(--os-text-primary);
-  --font-sans: var(--font-inter);
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Monaco,
+    "Courier New", monospace;
 }
 
 /* ── Base ──────────────────────────────────────────────── */
@@ -34,8 +96,53 @@ body {
   overflow: hidden;
   background: transparent;
   color: var(--os-text-primary);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
+  font-size: var(--type-base);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Global element resets (inherit system font) ───────── */
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+button {
+  font-weight: var(--fw-medium);
+}
+
+/* ── Typography utility classes ────────────────────────── */
+
+.os-label {
+  font-size: var(--type-base);
+  font-weight: var(--fw-medium);
+}
+
+.os-title {
+  font-size: var(--type-lg);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.01em;
+}
+
+.os-heading {
+  font-size: var(--type-xl);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.01em;
+}
+
+.os-caption {
+  font-size: var(--type-xs);
+  font-weight: var(--fw-regular);
+  color: var(--os-text-secondary);
 }
 
 /* ── Background gradient animation ─────────────────────── */

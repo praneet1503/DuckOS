@@ -319,7 +319,7 @@ function QuackCodeLogo({ className }: { className?: string }) {
         opacity="0.4"
         fontSize="12"
         fontWeight="600"
-        fontFamily="monospace"
+        fontFamily="'JetBrains Mono', monospace"
       >
         {"</>"}
       </text>
