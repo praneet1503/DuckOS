@@ -1,33 +1,13 @@
-/**
- * Duck OS — Virtual File System (VFS)
- *
- * A fully async, IndexedDB-backed virtual file system.
- * All apps must go through this module — no raw IndexedDB/localStorage.
- *
- * Designed for future swap to a backend API, permissions, metadata, etc.
- */
-
-// ── Data model ──────────────────────────────────────────────
 
 export interface FileNode {
-  /** Unique identifier (UUID) */
   id: string;
-  /** File or folder name (not a full path) */
   name: string;
-  /** Node type */
   type: "file" | "folder";
-  /** Parent folder id, null for root "/" */
   parentId: string | null;
-  /** File content (only for type === "file") */
   content?: string;
-  /** Creation timestamp */
   createdAt: number;
-  /** Last-modified timestamp */
   updatedAt: number;
 }
-
-// ── Internals ───────────────────────────────────────────────
-
 const DB_NAME = "duckos-vfs";
 const DB_VERSION = 1;
 const STORE = "files";
@@ -57,9 +37,6 @@ function openDB(): Promise<IDBDatabase> {
     req.onerror = () => reject(req.error);
   });
 }
-
-/* ── low-level helpers ── */
-
 async function getById(id: string): Promise<FileNode | undefined> {
   const db = await openDB();
   return new Promise((resolve, reject) => {
