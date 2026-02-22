@@ -1,9 +1,8 @@
 "use client";
 
-import { AnimatePresence } from "framer-motion";
 import { useOSStore } from "@/core/os-store";
 import Background from "./Background";
-import Window from "./Window";
+import WindowLayer from "./WindowLayer";
 import Dock from "./Dock";
 
 /**
@@ -13,7 +12,6 @@ import Dock from "./Dock";
  * Clicking empty space clears focus.
  */
 export default function Desktop() {
-  const openWindows = useOSStore((s) => s.openWindows);
   const clearFocus = useOSStore((s) => s.clearFocus);
 
   function handleDesktopClick(e: React.MouseEvent<HTMLDivElement>) {
@@ -30,16 +28,11 @@ export default function Desktop() {
     >
       <Background />
 
-      {/* Window layer */}
-      <AnimatePresence mode="popLayout">
-        {openWindows
-          .filter((w) => !w.isMinimized)
-          .map((win) => (
-            <Window key={win.id} win={win} />
-          ))}
-      </AnimatePresence>
+      {/* Window layer portal (isolated from desktop layout) */}
+      <WindowLayer />
 
       <Dock />
+
     </div>
   );
 }

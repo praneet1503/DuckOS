@@ -312,6 +312,12 @@ export default function LensApp() {
     [currentFile]
   );
 
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, []);
+
   /* ── format ───────────────────── */
   const formatJson = useCallback(() => {
     if (!parsed.ok) return;

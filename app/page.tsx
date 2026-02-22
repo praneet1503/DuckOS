@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useOSStore } from "@/core/os-store";
 import {
@@ -98,14 +99,16 @@ export default function Home() {
   const isBooted = useOSStore((s) => s.isBooted);
   const boot = useOSStore((s) => s.boot);
   const storeRegister = useOSStore((s) => s.registerApp);
+  const registeredApps = useOSStore((s) => s.registeredApps);
 
   // Sync registry → Zustand store (idempotent)
-  const registeredApps = useOSStore((s) => s.registeredApps);
-  if (registeredApps.length === 0) {
-    for (const app of getRegisteredApps()) {
-      storeRegister(app);
+  useEffect(() => {
+    if (registeredApps.length === 0) {
+      for (const app of getRegisteredApps()) {
+        storeRegister(app);
+      }
     }
-  }
+  }, [registeredApps.length, storeRegister]);
 
   function handleBootComplete() {
     boot();

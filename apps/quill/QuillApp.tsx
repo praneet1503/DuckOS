@@ -11,6 +11,8 @@ import {
 } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeSanitize from "rehype-sanitize";
+
 import {
   initFileSystem,
   listDirectory,
@@ -183,6 +185,13 @@ export default function QuillApp() {
     },
     [currentFile]
   );
+
+  // cleanup timer when component unmounts
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, []);
 
   /* ── manual save (Cmd+S) ─────── */
   const saveNow = useCallback(async () => {
@@ -417,7 +426,7 @@ export default function QuillApp() {
                   prose-hr:border-white/10
                   prose-th:text-white/60 prose-td:text-white/60
                   prose-img:rounded-lg">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
                     {content}
                   </ReactMarkdown>
                 </div>
