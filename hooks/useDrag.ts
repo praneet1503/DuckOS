@@ -76,6 +76,11 @@ export function useDrag({ onDragEnd, getPosition, disabled }: DragCallbacks) {
       const finalX = e.clientX - d.grabOffsetX;
       const finalY = e.clientY - d.grabOffsetY;
 
+      // Reset will-change so the browser can free the compositor layer.
+      if (elRef.current) {
+        elRef.current.style.willChange = "";
+      }
+
       // Commit final position — the component will re-render with the new
       // translate3d value from props, so we do NOT clear the transform here.
       onDragEnd(finalX, finalY);
