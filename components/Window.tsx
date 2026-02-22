@@ -56,27 +56,7 @@ function WindowInner({ win }: WindowProps) {
     disabled: win.isMaximized,
   });
 
-  // Focus this window on any pointer-down (title bar or body)
-  const handlePointerUp = useCallback((e: PointerEvent) => {
-    if (!dragState.current.dragging || dragState.current.pointerId !== e.pointerId) return;
-    dragState.current.dragging = false;
-    dragState.current.pointerId = null;
-    
-    const newLeft = e.clientX - dragState.current.grabOffsetX;
-    const newTop = e.clientY - dragState.current.grabOffsetY;
-    
-    // Update state synchronously so React renders the new position
-    updateWindowPosition(win.id, { x: newLeft, y: newTop });
-    
-    // Reset transform immediately
-    if (constraintsRef.current) {
-      constraintsRef.current.style.transform = "";
-      constraintsRef.current.style.willChange = "";
-    }
-    
-    window.removeEventListener("pointermove", handlePointerMove, true);
-    window.removeEventListener("pointerup", handlePointerUp, true);
-  }, [updateWindowPosition, win.id]);
+  // Note: low-level pointer lifecycle is handled by `useDrag` hook.
 
 
   // Keep for focus on window click (not drag)
@@ -106,7 +86,7 @@ function WindowInner({ win }: WindowProps) {
   return (
     <motion.div
       ref={elRef}
-      className="window-shell"
+      className={`absolute window-shell`}
       style={{
         position: "fixed",
         top: 0,
@@ -118,9 +98,6 @@ function WindowInner({ win }: WindowProps) {
         y: posY,
         pointerEvents: "auto",
       }}
-      initial={{ opacity: 1, scale: 1 }}
-      className="absolute"
-      style={style}
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{
         opacity: win.isMinimized ? 0 : 1,
@@ -148,7 +125,6 @@ function WindowInner({ win }: WindowProps) {
           <div className="flex items-center gap-2">
             <button
               onPointerDown={(e) => e.stopPropagation()}
-              onClick={() => closeWindow(win.id)}
               onClick={async () => {
                 if (app?.beforeClose) {
                   const allowed = await app.beforeClose();
