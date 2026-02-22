@@ -26,7 +26,7 @@ export function getSpawnPosition(openWindows: WindowInstance[]): WindowPosition 
 }
 
 /**
- * Clamp a position so at least 60 px of the title bar stays visible.
+ * Clamp a position so the entire window rectangle stays within the visible viewport.
  */
 export function clampPosition(
   pos: WindowPosition,
