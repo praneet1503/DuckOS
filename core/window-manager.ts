@@ -36,7 +36,16 @@ export function clampPosition(
   // Clamp so entire window rectangle stays within the visible viewport.
   // This prevents new windows from spawning off-screen and ensures
   // dragged windows cannot permanently disappear.
-  const x = Math.max(0, Math.min(pos.x, viewport.width - size.width));
-  const y = Math.max(0, Math.min(pos.y, viewport.height - size.height));
+  const maxX = viewport.width - size.width;
+  const maxY = viewport.height - size.height;
+
+  // If the window is larger than the viewport in either dimension,
+  // anchor it at the top-left so the maximum possible area remains visible.
+  if (maxX < 0 || maxY < 0) {
+    return { x: 0, y: 0 };
+  }
+
+  const x = Math.max(0, Math.min(pos.x, maxX));
+  const y = Math.max(0, Math.min(pos.y, maxY));
   return { x, y };
 }
