@@ -25,6 +25,12 @@ export interface AppDefinition {
   defaultSize: WindowSize;
   /** The component rendered inside the window */
   component: ComponentType;
+  /**
+   * Optional hook called before the window closes.
+   * Return `false` (or a Promise resolving to `false`) to cancel the close.
+   * Useful for dirty-state confirmation dialogs.
+   */
+  beforeClose?: () => boolean | Promise<boolean>;
 }
 
 // ── Window instance (runtime state per open window) ─────────

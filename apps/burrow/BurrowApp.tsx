@@ -12,6 +12,7 @@ import {
   getPathForNode,
   type FileNode,
 } from "@/core/vfs";
+import { useOSStore } from "@/core/os-store";
 
 /* ── helpers ─────────────────────────────────────── */
 function formatDate(ts: number) {
@@ -192,10 +193,39 @@ export default function BurrowApp() {
       if (entry.type === "folder") {
         setCurrentPath(currentPath === "/" ? `/${entry.name}` : `${currentPath}/${entry.name}`);
         setSelected(null);
+      } else {
+        // Open files with QuackCode
+        handleOpenWithQuackCode(entry);
       }
-      // For files, just select for now
     },
     [currentPath]
+  );
+
+  const openApp = useOSStore((s) => s.openApp);
+  const openWindows = useOSStore((s) => s.openWindows);
+  const focusWindow = useOSStore((s) => s.focusWindow);
+
+  const handleOpenWithQuackCode = useCallback(
+    (entry: FileNode) => {
+      if (entry.type !== "file") return;
+      const filePath = currentPath === "/" ? `/${entry.name}` : `${currentPath}/${entry.name}`;
+
+      // Focus existing QuackCode window or open a new one
+      const existing = openWindows.find((w) => w.appId === "quackcode");
+      if (existing) {
+        focusWindow(existing.id);
+      } else {
+        openApp("quackcode");
+      }
+
+      // Dispatch event for QuackCode to pick up (small delay to let it mount)
+      setTimeout(() => {
+        window.dispatchEvent(
+          new CustomEvent("quackcode:open-file", { detail: filePath }),
+        );
+      }, existing ? 50 : 400);
+    },
+    [currentPath, openWindows, focusWindow, openApp],
   );
 
   const handleCreate = useCallback(async () => {
@@ -312,6 +342,21 @@ export default function BurrowApp() {
             </button>
             {selected && (
               <>
+                {(() => {
+                  const selEntry = entries.find((x) => x.id === selected);
+                  if (selEntry && selEntry.type === "file") {
+                    return (
+                      <button
+                        onClick={() => handleOpenWithQuackCode(selEntry)}
+                        className="rounded-md px-2 py-1 text-[11px] text-amber-400/60 transition-colors hover:bg-amber-500/10 hover:text-amber-400"
+                        title="Open with QuackCode"
+                      >
+                        &lt;/&gt; Edit
+                      </button>
+                    );
+                  }
+                  return null;
+                })()}
                 <button
                   onClick={() => {
                     const e = entries.find((x) => x.id === selected);

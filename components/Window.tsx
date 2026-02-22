@@ -88,17 +88,19 @@ export default function Window({ win }: WindowProps) {
     if (!dragState.current.dragging || dragState.current.pointerId !== e.pointerId) return;
     dragState.current.dragging = false;
     dragState.current.pointerId = null;
-    // Reset transform immediately before updating state to avoid snap-back
+    
+    const newLeft = e.clientX - dragState.current.grabOffsetX;
+    const newTop = e.clientY - dragState.current.grabOffsetY;
+    
+    // Update state synchronously so React renders the new position
+    updateWindowPosition(win.id, { x: newLeft, y: newTop });
+    
+    // Reset transform immediately
     if (constraintsRef.current) {
       constraintsRef.current.style.transform = "";
       constraintsRef.current.style.willChange = "";
     }
-    // Commit the final position to state in a microtask to ensure DOM is updated first
-    const newLeft = e.clientX - dragState.current.grabOffsetX;
-    const newTop = e.clientY - dragState.current.grabOffsetY;
-    setTimeout(() => {
-      updateWindowPosition(win.id, { x: newLeft, y: newTop });
-    }, 0);
+    
     window.removeEventListener("pointermove", handlePointerMove, true);
     window.removeEventListener("pointerup", handlePointerUp, true);
   }, [updateWindowPosition, win.id]);
@@ -126,7 +128,6 @@ export default function Window({ win }: WindowProps) {
 
   return (
     <motion.div
-      layout
       className="absolute"
       style={style}
       initial={{ opacity: 0, scale: 0.96 }}
@@ -160,7 +161,13 @@ export default function Window({ win }: WindowProps) {
           {/* Traffic lights */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => closeWindow(win.id)}
+              onClick={async () => {
+                if (app?.beforeClose) {
+                  const allowed = await app.beforeClose();
+                  if (!allowed) return;
+                }
+                closeWindow(win.id);
+              }}
               className="relative flex h-4 w-4 items-center justify-center rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80"
               aria-label="Close"
             >

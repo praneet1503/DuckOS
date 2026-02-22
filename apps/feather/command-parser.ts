@@ -109,7 +109,7 @@ export async function parseCommand(
 
   if (lower === "open") {
     const target = args[0]?.toLowerCase();
-    const valid = ["pond", "nest", "feather", "flight", "echo", "burrow", "quill", "lens"];
+    const valid = ["pond", "nest", "feather", "flight", "echo", "burrow", "quill", "lens", "quackcode"];
     if (target && valid.includes(target)) {
       return {
         lines: [{ type: "output", content: `Opening ${target.charAt(0).toUpperCase() + target.slice(1)}…` }],
