@@ -6,7 +6,7 @@ import { useOSStore } from "@/core/os-store";
 import { getAppById } from "@/core/app-registry";
 import { useDrag } from "@/hooks/useDrag";
 import type { WindowInstance } from "@/core/types";
-import { clampPosition } from "@/core/window-manager";
+
 interface WindowProps {
   win: WindowInstance;
 }
@@ -37,17 +37,9 @@ function WindowInner({ win }: WindowProps) {
 
   const onDragEnd = useCallback(
     (x: number, y: number) => {
-      // always clamp synchronously — window manager is imported statically
-      if (typeof window !== "undefined") {
-        const { width, height } = win.size;
-        const vp = { width: window.innerWidth, height: window.innerHeight };
-        const { x: cx, y: cy } = clampPosition({ x, y }, { width, height }, vp);
-        updateWindowPosition(win.id, { x: cx, y: cy });
-      } else {
-        updateWindowPosition(win.id, { x, y });
-      }
+      updateWindowPosition(win.id, { x, y });
     },
-    [updateWindowPosition, win.id, win.size]
+    [updateWindowPosition, win.id]
   );
 
   const { elRef, onPointerDown: onTitlePointerDown } = useDrag({
