@@ -82,6 +82,7 @@ export function useDrag({ onDragEnd, getPosition, disabled }: DragCallbacks) {
 
       window.removeEventListener("pointermove", onPointerMove, true);
       window.removeEventListener("pointerup", onPointerUp, true);
+      window.removeEventListener("pointercancel", onPointerUp, true);
     },
     [onDragEnd, onPointerMove]
   );
