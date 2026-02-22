@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence } from "framer-motion";
 import { useOSStore } from "@/core/os-store";
@@ -19,15 +19,10 @@ import Window from "./Window";
 export default function WindowLayer() {
   const openWindows = useOSStore((s) => s.openWindows);
   const [host, setHost] = useState<HTMLElement | null>(null);
-  const created = useRef(false);
 
-  // Create or find the portal mount point exactly once and attach a
-  // click/pointer handler on the host so clicks on empty space can
-  // clear OS focus (we call the store directly via getState()).
-  useEffect(() => {
-    if (created.current) return;
-    created.current = true;
-
+  // Create or find the portal mount point exactly once
+  // Use useLayoutEffect so the host is created before first render
+  useLayoutEffect(() => {
     let el = document.getElementById("window-layer");
     let createdByUs = false;
     if (!el) {
@@ -38,36 +33,17 @@ export default function WindowLayer() {
     }
     setHost(el);
 
-    // pointerdown handler: if the user clicked the empty host (not a
-    // window), clear focus in the OS store.
-    const handler = (e: PointerEvent) => {
-      if (e.target === el) {
-        // access store directly to avoid hooks inside this DOM handler
-        try {
-          // useOSStore is a zustand hook which exposes getState()
-          // at runtime — call clearFocus() directly.
-          (useOSStore as any).getState().clearFocus();
-        } catch (err) {
-          console.warn("WindowLayer: failed to clear focus", err);
-        }
-      }
-    };
-
-    el.addEventListener("pointerdown", handler);
-
     return () => {
-      el.removeEventListener("pointerdown", handler);
-      // Cleanup only if WE created it
       if (createdByUs && el && el.parentNode) {
         el.parentNode.removeChild(el);
       }
     };
   }, []);
 
-  if (!host) return null;
+  if (!host) {
+    return null;
+  }
 
-  // debug log every render
-  console.log("WindowLayer render", openWindows);
   return createPortal(
     <AnimatePresence mode="popLayout">
       {openWindows

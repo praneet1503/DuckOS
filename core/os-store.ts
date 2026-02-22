@@ -36,7 +36,6 @@ export const useOSStore = create<OSState & OSActions>()((set, get) => ({
 
   // ── app lifecycle ───────────────────────────────────────
   openApp: (appId) => {
-    console.log("os-store.openApp", appId);
     const app = getAppById(appId);
     if (!app) {
       console.warn(`[os-store] Unknown app "${appId}"`);
