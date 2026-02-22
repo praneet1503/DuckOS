@@ -426,7 +426,7 @@ export default function QuillApp() {
                   prose-hr:border-white/10
                   prose-th:text-white/60 prose-td:text-white/60
                   prose-img:rounded-lg">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize as any]}>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
                     {content}
                   </ReactMarkdown>
                 </div>

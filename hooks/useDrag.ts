@@ -72,6 +72,13 @@ export function useDrag({ onDragEnd, getPosition, disabled }: DragCallbacks) {
         d.rafId = 0;
       }
 
+      // Clear temporary drag transform so the committed position (e.g. via
+      // Framer Motion x/y) is the only transform applied after drag ends.
+      if (elRef.current) {
+        elRef.current.style.transform = "";
+        elRef.current.style.willChange = "";
+      }
+
       // final position uses grab offset as well
       const finalX = e.clientX - d.grabOffsetX;
       const finalY = e.clientY - d.grabOffsetY;
@@ -83,10 +90,12 @@ export function useDrag({ onDragEnd, getPosition, disabled }: DragCallbacks) {
 
       // Commit final position — the component will re-render with the new
       // translate3d value from props, so we do NOT clear the transform here.
+      // Commit final position; caller will re-render with the new position.
       onDragEnd(finalX, finalY);
 
       window.removeEventListener("pointermove", onPointerMove, true);
       window.removeEventListener("pointerup", onPointerUp, true);
+      window.removeEventListener("pointercancel", onPointerUp, true);
     },
     [onDragEnd, onPointerMove]
   );
