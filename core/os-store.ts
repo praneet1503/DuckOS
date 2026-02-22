@@ -7,7 +7,7 @@ import type {
   WindowSize,
 } from "./types";
 import { getAppById } from "./app-registry";
-import { getSpawnPosition } from "./window-manager";
+import { getSpawnPosition, clampPosition, CASCADE } from "./window-manager";
 
 /**
  * Central OS store – the "kernel" of Duck OS.
@@ -47,10 +47,23 @@ export const useOSStore = create<OSState & OSActions>()((set, get) => ({
 
     const nextSeq = get().nextWindowSeq + 1;
 
+    // start windows roughly in the center of the viewport, cascading slightly
+    let spawn = getSpawnPosition(openWindows);
+    if (typeof window !== "undefined") {
+      const offset = CASCADE * (openWindows.length % 10);
+      spawn = {
+        x: window.innerWidth / 2 - app.defaultSize.width / 2 + offset,
+        y: window.innerHeight / 2 - app.defaultSize.height / 2 + offset,
+      };
+      spawn = clampPosition(spawn, app.defaultSize, {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
     const instance: WindowInstance = {
       id: `${appId}-${Date.now()}-${nextSeq}`,
       appId,
-      position: getSpawnPosition(openWindows),
+      position: spawn,
       size: { ...app.defaultSize },
       zIndex: nextZ,
       isMinimized: false,
@@ -102,11 +115,23 @@ export const useOSStore = create<OSState & OSActions>()((set, get) => ({
     })),
 
   updateWindowPosition: (windowId: string, position: WindowPosition) =>
-    set((s) => ({
-      openWindows: s.openWindows.map((w) =>
-        w.id === windowId ? { ...w, position } : w
-      ),
-    })),
+    set((s) => {
+      let pos = position;
+      if (typeof window !== "undefined") {
+        const w = s.openWindows.find((w) => w.id === windowId);
+        if (w) {
+          pos = clampPosition(position, w.size, {
+            width: window.innerWidth,
+            height: window.innerHeight,
+          });
+        }
+      }
+      return {
+        openWindows: s.openWindows.map((w) =>
+          w.id === windowId ? { ...w, position: pos } : w
+        ),
+      };
+    }),
 
   updateWindowSize: (windowId: string, size: WindowSize) =>
     set((s) => ({

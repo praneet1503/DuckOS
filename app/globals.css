@@ -67,3 +67,14 @@ body {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* ── Global window layer (portal mount) ────────────────── */
+/* Window layer: contains composited windows; it sits above the
+   desktop but does not itself capture pointer events. */
+#window-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+  overflow: visible;
+}
