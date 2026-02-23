@@ -261,7 +261,7 @@ export default function QuackCodeApp() {
         <div className="flex items-center gap-3">
           {activeTab ? (
             <>
-              <span className="truncate max-w-[260px]" title={activeTab.path}>
+              <span className="truncate max-w-65" title={activeTab.path}>
                 {activeTab.path}
               </span>
               {activeTab.isDirty && (
