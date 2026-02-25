@@ -140,7 +140,10 @@ export const exampleRequests = {
     ),
   } satisfies RequestConfig,
 
-  /** WeatherAPI: Current weather (WeatherAPI.com) */
+  /** WeatherAPI: Current weather (WeatherAPI.com)
+   * NOTE: Replace the API_KEY parameter value with your actual WeatherAPI key
+   * Get a free key at https://www.weatherapi.com/
+   */
   weatherapiCurrent: {
     method: "GET" as HttpMethod,
     // Default base URL for WeatherAPI (user requested base, not the full path)
@@ -149,6 +152,7 @@ export const exampleRequests = {
     params: [
       kv("q", "London"),
       kv("aqi", "no"),
+      kv("API_KEY", "ENTER_YOUR_WEATHERAPI_KEY_HERE"),
     ],
     body: "",
   } satisfies RequestConfig,

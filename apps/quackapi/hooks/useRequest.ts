@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo, useEffect } from "react";
 import type {
   HttpMethod,
   KeyValueEntry,
@@ -33,6 +33,7 @@ export interface RequestState {
   headers: KeyValueEntry[];
   params: KeyValueEntry[];
   body: string;
+  apiKey: string;
   activeRequestTab: RequestTab;
   response: ExecutionResult | null;
   error: ExecutionError | null;
@@ -81,6 +82,7 @@ const INITIAL_STATE: RequestState = {
   headers: [emptyEntry()],
   params: [emptyEntry()],
   body: "",
+  apiKey: "",
   activeRequestTab: "params",
   response: null,
   error: null,
@@ -94,6 +96,14 @@ const INITIAL_STATE: RequestState = {
 export function useRequest(): UseRequestReturn {
   const [state, setState] = useState<RequestState>(INITIAL_STATE);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Load API key from localStorage on mount
+  useEffect(() => {
+    const saved = typeof window !== "undefined" ? localStorage.getItem("quackapi_weatherapi_key") : null;
+    if (saved) {
+      setState((s) => ({ ...s, apiKey: saved }));
+    }
+  }, []);
 
   // ── Setters ─────────────────────────────────────────────
 
@@ -140,12 +150,28 @@ export function useRequest(): UseRequestReturn {
 
   const updateEntry = useCallback(
     (field: "headers" | "params", id: string, key: "key" | "value", value: string) => {
-      setState((s) => ({
-        ...s,
-        [field]: s[field].map((e) =>
-          e.id === id ? { ...e, [key]: value } : e
-        ),
-      }));
+      setState((s) => {
+        const updated = {
+          ...s,
+          [field]: s[field].map((e) =>
+            e.id === id ? { ...e, [key]: value } : e
+          ),
+        };
+
+        // If updating a "key" param in the params list, save it to localStorage
+        if (field === "params" && key === "value") {
+          const keyParam = updated.params.find((p) => p.key === "key");
+          if (keyParam && keyParam.value && typeof window !== "undefined") {
+            if (keyParam.value === "ENTER_YOUR_WEATHERAPI_KEY") {
+              localStorage.removeItem("quackapi_weatherapi_key");
+            } else {
+              localStorage.setItem("quackapi_weatherapi_key", keyParam.value);
+            }
+          }
+        }
+
+        return updated;
+      });
     },
     []
   );
@@ -191,13 +217,42 @@ export function useRequest(): UseRequestReturn {
     setState((s) => ({ ...s, isLoading: true, error: null, response: null }));
 
     try {
+      // Prepare execution URL/params. If the request targets WeatherAPI or
+      // OpenWeather, route it through our server-side proxy to avoid CORS.
+      let execUrl = state.url;
+      let execParams = state.params;
+
+      try {
+        const parsed = new URL(state.url, window.location.origin);
+        const hostname = parsed.hostname || "";
+        if (
+          hostname.includes("api.weatherapi.com") ||
+          hostname.includes("openweathermap.org") ||
+          state.url.startsWith("/api/weather")
+        ) {
+          execUrl = "/api/weather";
+
+          // Merge existing params and querystring into a params map
+          const map = new Map<string, KeyValueEntry>();
+          for (const p of execParams) map.set(p.key, p);
+          for (const [k, v] of parsed.searchParams.entries()) {
+            if (!map.has(k)) map.set(k, { id: uid(), key: k, value: v, enabled: true });
+          }
+
+          execParams = Array.from(map.values());
+        }
+      } catch {
+        // ignore parse errors and fall back to original url/params
+      }
+
       const result = await executeRequest({
         method: state.method,
-        url: state.url,
+        url: execUrl,
         headers: state.headers,
-        params: state.params,
+        params: execParams,
         body: state.body,
       });
+
       setState((s) => ({ ...s, response: result, isLoading: false }));
     } catch (err) {
       setState((s) => ({
@@ -228,14 +283,40 @@ export function useRequest(): UseRequestReturn {
 
   const loadFromRequestItem = useCallback(
     (item: RequestItem, collectionId: string) => {
+      // If the saved request targets our server proxy, display the
+      // external provider's base URL in the UI while keeping the proxy as
+      // the execution target under the hood.
+      const displayUrl = item.url.startsWith("/api/weather")
+        ? "http://api.weatherapi.com/v1"
+        : item.url;
+
+      // If this is a weather request and the user has a saved API key in localStorage,
+      // update the "key" param to use the saved key (instead of the placeholder).
+      let params = item.params.length > 0 ? item.params : [emptyEntry()];
+      if (
+        (item.url.includes("weatherapi.com") || item.url.startsWith("/api/weather")) &&
+        typeof window !== "undefined"
+      ) {
+        const savedKey = localStorage.getItem("quackapi_weatherapi_key");
+        if (savedKey) {
+          // Find and update the "key" param, or add it if not present
+          const keyParamIdx = params.findIndex((p) => p.key === "key");
+          if (keyParamIdx !== -1) {
+            params = params.map((p, i) =>
+              i === keyParamIdx ? { ...p, value: savedKey } : p
+            );
+          }
+        }
+      }
+
       setState((s) => ({
         ...s,
         method: item.method,
-        url: item.url,
+        url: displayUrl,
         headers: item.headers.length > 0 ? item.headers : [emptyEntry()],
-        params: item.params.length > 0 ? item.params : [emptyEntry()],
+        params,
         body: item.body,
-        urlValid: item.url === "" || isValidUrl(item.url),
+        urlValid: displayUrl === "" || isValidUrl(displayUrl),
         bodyValid: true,
         response: null,
         error: null,

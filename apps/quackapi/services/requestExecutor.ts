@@ -27,7 +27,19 @@ const METHODS_WITH_BODY: HttpMethod[] = ["POST", "PUT", "PATCH"];
  * Respects any existing query string on the URL.
  */
 function buildUrl(base: string, params: KeyValueEntry[]): string {
-  const url = new URL(base);
+  let url: URL;
+  try {
+    url = new URL(base);
+  } catch {
+    // If `base` is a relative path (e.g. "/api/weather/current"), construct
+    // an absolute URL using the current origin when running in the browser.
+    if (typeof window !== "undefined" && window.location?.origin) {
+      url = new URL(base, window.location.origin);
+    } else {
+      // Re-throw to be handled by caller (e.g. invalid URL on server).
+      throw new Error("Invalid URL");
+    }
+  }
   for (const p of params) {
     if (p.enabled && p.key.trim()) {
       url.searchParams.append(p.key.trim(), p.value);

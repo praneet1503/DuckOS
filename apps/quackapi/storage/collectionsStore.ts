@@ -147,11 +147,11 @@ export async function listCollections(): Promise<Collection[]> {
     result.sort((a, b) => b.updatedAt - a.updatedAt);
 
       // Migration: replace legacy OpenWeather or direct WeatherAPI requests
-      // with our server-side proxy (`/api/weather/current`). This ensures the
+      // with our server-side proxy (`/api/weather`). This ensures the
       // client never calls the third-party API directly (avoids CORS/401).
       const openWeatherHost = "openweathermap.org";
       const directWeatherApiHost = "api.weatherapi.com";
-      const proxyPath = "/api/weather/current";
+      const proxyPath = "/api/weather";
 
       for (const col of result) {
         let changed = false;
