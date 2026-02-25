@@ -16,6 +16,7 @@ import { BurrowApp, BurrowIcon } from "@/apps/burrow";
 import { QuillApp, QuillIcon } from "@/apps/quill";
 import { LensApp, LensIcon } from "@/apps/lens";
 import { QuackCodeApp, QuackCodeIcon } from "@/apps/quackcode";
+import { QuackAPIApp, QuackAPIIcon } from "@/apps/quackapi";
 import BootScreen from "@/components/BootScreen";
 import Desktop from "@/components/Desktop";
 
@@ -90,6 +91,14 @@ registerApp({
   icon: QuackCodeIcon,
   defaultSize: { width: 900, height: 560 },
   component: QuackCodeApp,
+});
+
+registerApp({
+  id: "quackapi.app",
+  name: "QuackAPI",
+  icon: QuackAPIIcon,
+  defaultSize: { width: 1100, height: 700 },
+  component: QuackAPIApp,
 });
 
 /**
