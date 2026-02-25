@@ -143,8 +143,8 @@ export const exampleRequests = {
   /** WeatherAPI: Current weather (WeatherAPI.com) */
   weatherapiCurrent: {
     method: "GET" as HttpMethod,
-    // Use our server-side proxy to avoid CORS and keep the key on the server
-    url: "/api/weather/current",
+    // Default base URL for WeatherAPI (user requested base, not the full path)
+    url: "http://api.weatherapi.com/v1",
     headers: [kv("Accept", "application/json")],
     params: [
       kv("q", "London"),
