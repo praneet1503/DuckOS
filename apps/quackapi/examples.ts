@@ -144,7 +144,7 @@ export const exampleRequests = {
   weatherapiCurrent: {
     method: "GET" as HttpMethod,
     // Default base URL for WeatherAPI (user requested base, not the full path)
-    url: "http://api.weatherapi.com/v1",
+    url: "https://api.weatherapi.com/v1",
     headers: [kv("Accept", "application/json")],
     params: [
       kv("q", "London"),
