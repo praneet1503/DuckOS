@@ -107,7 +107,7 @@ function CollectionsSidebar({
     <div className="flex flex-col h-full border-r border-(--os-border) bg-white/2">
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-(--os-border)">
-        <span className="text-[12px] font-semibold text-[var(--os-text-primary)] uppercase tracking-wider">
+        <span className="text-[12px] font-semibold text-foreground uppercase tracking-wider">
           Collections
         </span>
         <div className="flex items-center gap-1">
@@ -141,9 +141,9 @@ function CollectionsSidebar({
               onKeyDown={handleCreateKeyDown}
               onBlur={handleCreateSubmit}
               placeholder="Collection name…"
-              className="w-full px-2 py-1 bg-white/8 border border-[var(--os-accent-teal)]/40
-                rounded text-[12px] text-[var(--os-text-primary)] outline-none
-                placeholder:text-[var(--os-text-secondary)]/40"
+              className="w-full px-2 py-1 bg-white/8 border border-(--os-accent-teal)/40
+                rounded text-[12px] text-foreground outline-none
+                placeholder:text-(--os-text-secondary)/40"
             />
           </div>
         )}
@@ -151,7 +151,7 @@ function CollectionsSidebar({
         {/* Empty state */}
         {collections.isLoaded && collections.collections.length === 0 && !isCreating && (
           <div className="px-3 py-6 text-center">
-            <div className="text-[var(--os-text-secondary)] text-[11px]">
+            <div className="text-(--os-text-secondary) text-[11px]">
               No collections yet
             </div>
             <QAButton
@@ -229,10 +229,10 @@ const CollectionItem = memo(function CollectionItem({
     <div>
       {/* Collection header */}
       <div
-        className="flex items-center gap-1 px-2 py-1 hover:bg-white/[0.05] cursor-pointer group"
+        className="flex items-center gap-1 px-2 py-1 hover:bg-white/5 cursor-pointer group"
         onClick={onToggle}
       >
-        <span className="text-[var(--os-text-secondary)] text-[11px] w-4 text-center shrink-0 select-none">
+        <span className="text-(--os-text-secondary) text-[11px] w-4 text-center shrink-0 select-none">
           {isExpanded ? "▾" : "▸"}
         </span>
 
@@ -244,11 +244,11 @@ const CollectionItem = memo(function CollectionItem({
             onKeyDown={onRenameKeyDown}
             onBlur={onRenameSubmit}
             onClick={(e) => e.stopPropagation()}
-            className="flex-1 px-1 py-0 bg-white/8 border border-[var(--os-accent-teal)]/40
-              rounded text-[12px] text-[var(--os-text-primary)] outline-none min-w-0"
+            className="flex-1 px-1 py-0 bg-white/8 border border-(--os-accent-teal)/40
+              rounded text-[12px] text-foreground outline-none min-w-0"
           />
         ) : (
-          <span className="flex-1 text-[12px] text-[var(--os-text-primary)] truncate select-none">
+          <span className="flex-1 text-[12px] text-foreground truncate select-none">
             {collection.name}
           </span>
         )}
