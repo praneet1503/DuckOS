@@ -1,13 +1,3 @@
-/* ══════════════════════════════════════════════════════════════
-   QuackAPI — Examples & Fixtures
-   ────────────────────────────────────────────────────────────
-   Comprehensive examples showing:
-   - RequestConfig with all fields populated
-   - Collection structure
-   - Common API examples (JSON Placeholder, GitHub, etc.)
-   - Fixture data for development/testing
-   ══════════════════════════════════════════════════════════ */
-
 import type {
   RequestConfig,
   Collection,
@@ -17,8 +7,6 @@ import type {
   HttpMethod,
 } from "./types";
 
-// ── Utility: Create a key-value entry ────────────────────
-
 function kv(key: string, value: string, enabled = true): KeyValueEntry {
   return {
     id: crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
@@ -27,10 +15,6 @@ function kv(key: string, value: string, enabled = true): KeyValueEntry {
     enabled,
   };
 }
-
-// ═══════════════════════════════════════════════════════════════
-// EXAMPLE 1: Full RequestConfig
-// ═══════════════════════════════════════════════════════════════
 
 export const exampleFullRequest: RequestConfig = {
   method: "POST",
@@ -53,12 +37,7 @@ export const exampleFullRequest: RequestConfig = {
   ),
 };
 
-// ═══════════════════════════════════════════════════════════════
-// EXAMPLE 2: Request Examples (Common APIs)
-// ═══════════════════════════════════════════════════════════════
-
 export const exampleRequests = {
-  /** GET JSON Placeholder posts */
   jsonPlaceholderList: {
     method: "GET" as HttpMethod,
     url: "https://jsonplaceholder.typicode.com/posts",
@@ -67,7 +46,6 @@ export const exampleRequests = {
     body: "",
   } satisfies RequestConfig,
 
-  /** GET JSON Placeholder single post */
   jsonPlaceholderSingle: {
     method: "GET" as HttpMethod,
     url: "https://jsonplaceholder.typicode.com/posts/1",
@@ -76,7 +54,6 @@ export const exampleRequests = {
     body: "",
   } satisfies RequestConfig,
 
-  /** GET httpbin.org GET echo */
   httpbinGet: {
     method: "GET" as HttpMethod,
     url: "https://httpbin.org/get",
@@ -87,7 +64,6 @@ export const exampleRequests = {
     body: "",
   } satisfies RequestConfig,
 
-  /** GET httpbin.org delay */
   httpbinDelay: {
     method: "GET" as HttpMethod,
     url: "https://httpbin.org/delay/3",
@@ -96,7 +72,6 @@ export const exampleRequests = {
     body: "",
   } satisfies RequestConfig,
 
-  /** GET Public APIs list */
   publicApisList: {
     method: "GET" as HttpMethod,
     url: "https://api.publicapis.org/entries",
@@ -105,7 +80,6 @@ export const exampleRequests = {
     body: "",
   } satisfies RequestConfig,
 
-  /** GET GitHub API: Get user repos */
   githubUserRepos: {
     method: "GET" as HttpMethod,
     url: "https://api.github.com/users/octocat/repos",
@@ -117,7 +91,6 @@ export const exampleRequests = {
     body: "",
   } satisfies RequestConfig,
 
-  /** GitHub API: Create issue (requires auth) */
   githubCreateIssue: {
     method: "POST" as HttpMethod,
     url: "https://api.github.com/repos/owner/repo/issues",
@@ -140,13 +113,8 @@ export const exampleRequests = {
     ),
   } satisfies RequestConfig,
 
-  /** WeatherAPI: Current weather (WeatherAPI.com)
-   * NOTE: Replace the API_KEY parameter value with your actual WeatherAPI key
-   * Get a free key at https://www.weatherapi.com/
-   */
   weatherapiCurrent: {
     method: "GET" as HttpMethod,
-    // Default base URL for WeatherAPI (user requested base, not the full path)
     url: "https://api.weatherapi.com/v1",
     headers: [kv("Accept", "application/json")],
     params: [
@@ -157,7 +125,6 @@ export const exampleRequests = {
     body: "",
   } satisfies RequestConfig,
 
-  /** Stripe API: List customers */
   stripeListCustomers: {
     method: "GET" as HttpMethod,
     url: "https://api.stripe.com/v1/customers",
@@ -170,10 +137,6 @@ export const exampleRequests = {
   } satisfies RequestConfig,
 };
 
-// ═══════════════════════════════════════════════════════════════
-// EXAMPLE 3: RequestItem (saved request in collection)
-// ═══════════════════════════════════════════════════════════════
-
 export const exampleRequestItem: RequestItem = {
   id: "req-123abc",
   name: "Get All Users",
@@ -185,10 +148,6 @@ export const exampleRequestItem: RequestItem = {
   createdAt: 1640995200000,
   updatedAt: 1640995200000,
 };
-
-// ═══════════════════════════════════════════════════════════════
-// EXAMPLE 4: Full Collection Structure
-// ═══════════════════════════════════════════════════════════════
 
 export const exampleCollection: Collection = {
   id: "col-456def",
@@ -246,7 +205,6 @@ export const exampleCollection: Collection = {
   ],
 };
 
-// quick start collection used when no collections exist yet
 export const quickStartCollection: Collection = {
   id: "col-quick-start",
   name: "Quick Start",
@@ -300,10 +258,6 @@ export const quickStartCollection: Collection = {
 
 export const QUICK_START_COLLECTIONS: Collection[] = [quickStartCollection];
 
-// ═══════════════════════════════════════════════════════════════
-// EXAMPLE 5: ExecutionResult (successful response)
-// ═══════════════════════════════════════════════════════════════
-
 export const exampleSuccessResponse: ExecutionResult = {
   status: 200,
   statusText: "OK",
@@ -328,10 +282,6 @@ export const exampleSuccessResponse: ExecutionResult = {
   raw: '[{"userId":1,"id":1,"title":"sunt"}]',
   isJson: true,
 };
-
-// ═══════════════════════════════════════════════════════════════
-// EXAMPLE 6: Multiple Collections (fixture)
-// ═══════════════════════════════════════════════════════════════
 
 export const exampleCollections: Collection[] = [
   {
@@ -377,10 +327,6 @@ export const exampleCollections: Collection[] = [
   },
 ];
 
-// ═══════════════════════════════════════════════════════════════
-// EXAMPLE 7: Real-world scenarios
-// ═══════════════════════════════════════════════════════════════
-
 export const exampleAuthenticatedRequest: RequestConfig = {
   method: "GET",
   url: "https://api.example.com/v1/data",
@@ -410,9 +356,6 @@ export const exampleGraphQLRequest: RequestConfig = {
   ),
 };
 
-// ═══════════════════════════════════════════════════════════════
-// Export all examples
-// ═══════════════════════════════════════════════════════════════
 
 export const EXAMPLES = {
   fullRequest: exampleFullRequest,
