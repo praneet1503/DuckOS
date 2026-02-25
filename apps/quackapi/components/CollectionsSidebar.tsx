@@ -104,9 +104,9 @@ function CollectionsSidebar({
   );
 
   return (
-    <div className="flex flex-col h-full border-r border-[var(--os-border)] bg-white/[0.02]">
+    <div className="flex flex-col h-full border-r border-(--os-border) bg-white/2">
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-[var(--os-border)]">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-(--os-border)">
         <span className="text-[12px] font-semibold text-[var(--os-text-primary)] uppercase tracking-wider">
           Collections
         </span>

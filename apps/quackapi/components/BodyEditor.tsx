@@ -39,9 +39,9 @@ function BodyEditor({ value, onChange, isValid }: BodyEditorProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-2 py-1 border-b border-[var(--os-border)]">
+      <div className="flex items-center justify-between px-2 py-1 border-b border-(--os-border)">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-[var(--os-text-secondary)]">
+          <span className="text-[11px] text-(--os-text-secondary)">
             Raw JSON
           </span>
           {showError && (
@@ -51,13 +51,13 @@ function BodyEditor({ value, onChange, isValid }: BodyEditorProps) {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[10px] text-[var(--os-text-secondary)]">
+          <span className="text-[10px] text-(--os-text-secondary)">
             {lineCount} lines · {charCount} chars
           </span>
           <button
             onClick={handleFormat}
             disabled={showError || !value.trim()}
-            className="text-[11px] text-[var(--os-accent-teal)] hover:text-[var(--os-accent-teal)]/80
+            className="text-[11px] text-(--os-accent-teal) hover:text-(--os-accent-teal)/80
               disabled:opacity-30 disabled:cursor-default cursor-pointer transition-colors"
           >
             Format
@@ -73,11 +73,11 @@ function BodyEditor({ value, onChange, isValid }: BodyEditorProps) {
         placeholder='{\n  "key": "value"\n}'
         className={`
           flex-1 w-full px-3 py-2 resize-none
-          bg-transparent text-[var(--os-text-primary)]
+          bg-transparent text-foreground
           text-[12px] font-mono leading-[1.6]
           outline-none
-          placeholder:text-[var(--os-text-secondary)]/30
-          ${showError ? "bg-red-500/[0.03]" : ""}
+          placeholder:text-(--os-text-secondary)/30
+          ${showError ? "bg-red-500/3" : ""}
         `}
         spellCheck={false}
         autoComplete="off"
