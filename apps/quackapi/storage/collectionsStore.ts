@@ -80,10 +80,150 @@ export async function listCollections(): Promise<Collection[]> {
         }
       }
     }
-
     // Sort by updatedAt desc
     collections.sort((a, b) => b.updatedAt - a.updatedAt);
-    return collections;
+
+    // Deduplicate collections by normalized name. If multiple collections
+    // share the same name, merge their requests into the most recently
+    // updated collection and delete the duplicates. This keeps the VFS
+    // idempotent and avoids duplicate "Quick Start" entries.
+    const normalizedMap = new Map<string, Collection[]>();
+    for (const c of collections) {
+      const key = c.name.trim().toLowerCase();
+      const arr = normalizedMap.get(key) ?? [];
+      arr.push(c);
+      normalizedMap.set(key, arr);
+    }
+
+    const result: Collection[] = [];
+
+    for (const [_, group] of normalizedMap) {
+      if (group.length === 1) {
+        result.push(group[0]);
+        continue;
+      }
+
+      // Multiple collections with the same name — choose the newest as primary
+      group.sort((a, b) => b.updatedAt - a.updatedAt);
+      const primary = group[0];
+
+      // Build a set of existing request signatures to avoid duplicates
+      const sig = (r: RequestItem) => `${r.method}::${r.url}::${(r.name || "").trim()}`;
+      const existing = new Set(primary.requests.map(sig));
+
+      // Merge requests from older copies
+      for (let i = 1; i < group.length; i++) {
+        const donor = group[i];
+        for (const req of donor.requests) {
+          if (!existing.has(sig(req))) {
+            primary.requests.push(req);
+            existing.add(sig(req));
+          }
+        }
+      }
+
+      // Update timestamps and persist merged primary
+      primary.updatedAt = Date.now();
+      try {
+        await saveCollection(primary);
+      } catch {
+        // ignore save errors — we'll still try to remove duplicates
+      }
+
+      // Delete the older duplicated files
+      for (let i = 1; i < group.length; i++) {
+        const dup = group[i];
+        try {
+          await deleteNode(`${COLLECTIONS_DIR}/${dup.id}.json`);
+        } catch {
+          // ignore delete errors
+        }
+      }
+
+      result.push(primary);
+    }
+
+    // Ensure final sort
+    result.sort((a, b) => b.updatedAt - a.updatedAt);
+
+      // Migration: replace legacy OpenWeather or direct WeatherAPI requests
+      // with our server-side proxy (`/api/weather/current`). This ensures the
+      // client never calls the third-party API directly (avoids CORS/401).
+      const openWeatherHost = "openweathermap.org";
+      const directWeatherApiHost = "api.weatherapi.com";
+      const proxyPath = "/api/weather/current";
+
+      for (const col of result) {
+        let changed = false;
+        for (let i = 0; i < col.requests.length; i++) {
+          const r = col.requests[i];
+          if (typeof r.url !== "string") continue;
+
+          const isOpenWeather = r.url.includes(openWeatherHost);
+          const isDirectWeatherApi = r.url.includes(directWeatherApiHost);
+
+          if (!isOpenWeather && !isDirectWeatherApi) continue;
+
+          // Extract q/units or query string from params or from URL
+          let q = "London";
+          let aqi = "no";
+
+          // Prefer params array if present
+          if (Array.isArray((r as any).params)) {
+            for (const p of (r as any).params as KeyValueEntry[]) {
+              if (p.key === "q") q = p.value || q;
+              if (p.key === "aqi") aqi = p.value || aqi;
+              if (p.key === "units") {
+                // convert units to nothing — WeatherAPI returns standard units
+              }
+            }
+          } else {
+            try {
+              const u = new URL(r.url);
+              if (u.searchParams.get("q")) q = u.searchParams.get("q") || q;
+              if (u.searchParams.get("aqi")) aqi = u.searchParams.get("aqi") || aqi;
+              if (u.searchParams.get("units")) {
+                // ignore units param
+              }
+            } catch {
+              // ignore URL parse errors
+            }
+          }
+
+          // Build migrated request to point at proxy
+          const newParams: KeyValueEntry[] = [
+            { id: uid(), key: "q", value: q, enabled: true },
+            { id: uid(), key: "aqi", value: aqi, enabled: true },
+          ];
+
+          const migrated: RequestItem = {
+            ...r,
+            id: uid(),
+            name: r.name?.includes("weather") ? r.name : `Weather: ${q}`,
+            method: "GET",
+            url: proxyPath,
+            headers: [{ id: uid(), key: "Accept", value: "application/json", enabled: true }],
+            params: newParams,
+            body: "",
+            createdAt: r.createdAt || Date.now(),
+            updatedAt: Date.now(),
+          };
+
+          col.requests[i] = migrated;
+          changed = true;
+        }
+
+        if (changed) {
+          col.updatedAt = Date.now();
+          try {
+            await saveCollection(col);
+          } catch {
+            // best-effort
+          }
+        }
+      }
+
+      return result;
   } catch {
     return [];
   }

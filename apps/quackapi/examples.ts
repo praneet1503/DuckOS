@@ -140,15 +140,15 @@ export const exampleRequests = {
     ),
   } satisfies RequestConfig,
 
-  /** OpenWeather API: Get weather */
-  openweatherGet: {
+  /** WeatherAPI: Current weather (WeatherAPI.com) */
+  weatherapiCurrent: {
     method: "GET" as HttpMethod,
-    url: "https://api.openweathermap.org/data/2.5/weather",
+    // Use our server-side proxy to avoid CORS and keep the key on the server
+    url: "/api/weather/current",
     headers: [kv("Accept", "application/json")],
     params: [
       kv("q", "London"),
-      kv("appid", "YOUR_API_KEY", false),
-      kv("units", "metric"),
+      kv("aqi", "no"),
     ],
     body: "",
   } satisfies RequestConfig,
@@ -279,8 +279,8 @@ export const quickStartCollection: Collection = {
     },
     {
       id: "qs-5",
-      name: "Public APIs list",
-      ...exampleRequests.publicApisList,
+      name: "WeatherAPI current (WeatherAPI.com)",
+      ...exampleRequests.weatherapiCurrent,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     },
