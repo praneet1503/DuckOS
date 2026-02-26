@@ -18,6 +18,7 @@ import { LensApp, LensIcon } from "@/apps/lens";
 import { QuackCodeApp, QuackCodeIcon } from "@/apps/quackcode";
 import { QuackAPIApp, QuackAPIIcon } from "@/apps/quackapi";
 import { ClockApp, ClockIcon } from "@/apps/clock";
+import { CalendarApp, CalendarIcon } from "@/apps/calendar";
 import BootScreen from "@/components/BootScreen";
 import Desktop from "@/components/Desktop";
 
@@ -108,6 +109,14 @@ registerApp({
   icon: ClockIcon,
   defaultSize: { width: 480, height: 380 },
   component: ClockApp,
+});
+
+registerApp({
+  id: "calendar",
+  name: "Calendar",
+  icon: CalendarIcon,
+  defaultSize: { width: 520, height: 560 },
+  component: CalendarApp,
 });
 
 /**

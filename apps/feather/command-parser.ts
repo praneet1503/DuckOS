@@ -1,14 +1,4 @@
-import {
-  initFileSystem,
-  listDirectory,
-  createFile,
-  createFolder,
-  readFile,
-  deleteNode,
-  moveNode,
-  getNodeByPath,
-  type FileNode,
-} from "@/core/vfs";
+import {initFileSystem,listDirectory,createFile,createFolder,readFile,deleteNode,moveNode,getNodeByPath,type FileNode,} from "@/core/vfs";
 
 export type TerminalLinePayload = {
   type: "output" | "error";
@@ -125,6 +115,7 @@ export async function parseCommand(
       "quackcode",
       "quackapi.app",
       "clock",
+      "calendar",
     ];
 
     if (target && valid.includes(target)) {
