@@ -108,14 +108,33 @@ export async function parseCommand(
   }
 
   if (lower === "open") {
-    const target = args[0]?.toLowerCase();
-    const valid = ["pond", "nest", "feather", "flight", "echo", "burrow", "quill", "lens", "quackcode"];
+    let target = args[0]?.toLowerCase();
+
+    // Accept short alias for quackapi
+    if (target === "quackapi") target = "quackapi.app";
+
+    const valid = [
+      "pond",
+      "nest",
+      "feather",
+      "flight",
+      "echo",
+      "burrow",
+      "quill",
+      "lens",
+      "quackcode",
+      "quackapi.app",
+      "clock",
+    ];
+
     if (target && valid.includes(target)) {
+      const display = target === "quackapi.app" ? "QuackAPI" : target.charAt(0).toUpperCase() + target.slice(1);
       return {
-        lines: [{ type: "output", content: `Opening ${target.charAt(0).toUpperCase() + target.slice(1)}…` }],
+        lines: [{ type: "output", content: `Opening ${display}…` }],
         openAppId: target,
       };
     }
+
     return {
       lines: [{ type: "error", content: `Unknown app: ${args[0] ?? "?"}. Available: ${valid.join(", ")}` }],
     };

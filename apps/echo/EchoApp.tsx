@@ -25,9 +25,13 @@ export default function EchoApp() {
     // Simulate thinking + support simple "open <app>" commands
     setTimeout(() => {
       const lower = text.toLowerCase();
-      const openMatch = lower.match(/^open\s+(\w+)/);
+      // allow dotted ids (e.g. quackapi.app) and simple aliases
+      const openMatch = lower.match(/^open\s+([\w.\-]+)/);
       if (openMatch) {
-        const appId = openMatch[1];
+        let appId = openMatch[1];
+        // map common aliases
+        if (appId === "quackapi") appId = "quackapi.app";
+
         const store = useOSStore.getState();
         if (store.registeredApps.some((a) => a.id === appId)) {
           store.openApp(appId);

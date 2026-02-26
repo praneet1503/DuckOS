@@ -17,6 +17,7 @@ import { QuillApp, QuillIcon } from "@/apps/quill";
 import { LensApp, LensIcon } from "@/apps/lens";
 import { QuackCodeApp, QuackCodeIcon } from "@/apps/quackcode";
 import { QuackAPIApp, QuackAPIIcon } from "@/apps/quackapi";
+import { ClockApp, ClockIcon } from "@/apps/clock";
 import BootScreen from "@/components/BootScreen";
 import Desktop from "@/components/Desktop";
 
@@ -99,6 +100,14 @@ registerApp({
   icon: QuackAPIIcon,
   defaultSize: { width: 1100, height: 700 },
   component: QuackAPIApp,
+});
+
+registerApp({
+  id: "clock",
+  name: "Clock",
+  icon: ClockIcon,
+  defaultSize: { width: 480, height: 380 },
+  component: ClockApp,
 });
 
 /**

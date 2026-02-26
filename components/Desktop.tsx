@@ -4,6 +4,7 @@ import { useOSStore } from "@/core/os-store";
 import Background from "./Background";
 import WindowLayer from "./WindowLayer";
 import Dock from "./Dock";
+import TimeWidget from "@/widgets/time/TimeWidget";
 
 /**
  * Desktop — the full-screen compositor shell.
@@ -27,6 +28,9 @@ export default function Desktop() {
       onClick={handleDesktopClick}
     >
       <Background />
+
+      {/* Desktop widget — mounted (widget handles its own positioning) */}
+      <TimeWidget />
 
       {/* Window layer portal (isolated from desktop layout) */}
       <WindowLayer />
