@@ -1,0 +1,5 @@
+# Why I started all of these
+all right ik you have seen many web OS in but i was trying to build one for myself actually because i had a project on my mind to build one just like an OS but that have different type of work well (that is entirely something else an off topic) back to topic that is umm... yeah so i wanted to try to see how good of a dummy OS . I could make one on the web which i am very good at creating web apps then maybe i would know the basics of the OS that would be helpful for me hehehehehe
+
+# Who am i ?
+well i am praneet but you can call me prentz.(You should call me prentz as it is my pseudo name honestly call me wtv you want.)i am a student who is just trying to build things tbh i am guy who is a vibecoding a lot more than you think but yeah i am a natural learner i learn things a lot faster but kind of not remeber it much think of it as a RAM memory hehehe anyways i am also natural technical guy honestly so yeah i am good at it probably rest thats my story i would updated it more later on. now i need to write the readme of this project. so byee
