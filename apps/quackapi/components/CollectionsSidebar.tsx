@@ -261,7 +261,7 @@ const CollectionItem = memo(function CollectionItem({
               onExport();
             }}
             className="w-5 h-5 flex items-center justify-center text-[10px]
-              text-[var(--os-text-secondary)] hover:text-[var(--os-text-primary)]
+              text-(--os-text-secondary) hover:text-foreground
               rounded hover:bg-white/10 cursor-pointer transition-colors"
             title="Export"
           >
@@ -273,7 +273,7 @@ const CollectionItem = memo(function CollectionItem({
               onRenameStart();
             }}
             className="w-5 h-5 flex items-center justify-center text-[10px]
-              text-[var(--os-text-secondary)] hover:text-[var(--os-text-primary)]
+              text-(--os-text-secondary) hover:text-foreground
               rounded hover:bg-white/10 cursor-pointer transition-colors"
             title="Rename"
           >
@@ -285,7 +285,7 @@ const CollectionItem = memo(function CollectionItem({
               onDelete();
             }}
             className="w-5 h-5 flex items-center justify-center text-[10px]
-              text-[var(--os-text-secondary)] hover:text-red-400
+              text-(--os-text-secondary) hover:text-red-400
               rounded hover:bg-red-500/10 cursor-pointer transition-colors"
             title="Delete"
           >
@@ -298,7 +298,7 @@ const CollectionItem = memo(function CollectionItem({
       {isExpanded && (
         <div className="ml-4">
           {collection.requests.length === 0 && (
-            <div className="px-3 py-2 text-[11px] text-[var(--os-text-secondary)] italic">
+            <div className="px-3 py-2 text-[11px] text-(--os-text-secondary) italic">
               No requests
             </div>
           )}
@@ -335,17 +335,17 @@ const RequestRow = memo(function RequestRow({
   return (
     <div
       className={`flex items-center gap-1.5 px-2 py-1 cursor-pointer group
-        ${isActive ? "bg-[var(--os-accent-teal)]/10" : "hover:bg-white/[0.04]"}`}
+        ${isActive ? "bg-(--os-accent-teal)/10" : "hover:bg-white/4"}`}
       onClick={onSelect}
     >
       <span
         className={`text-[10px] font-mono font-semibold w-10 shrink-0 ${
-          METHOD_COLORS[request.method] ?? "text-[var(--os-text-secondary)]"
+          METHOD_COLORS[request.method] ?? "text-(--os-text-secondary)"
         }`}
       >
         {request.method}
       </span>
-      <span className="flex-1 text-[11px] text-[var(--os-text-primary)] truncate">
+      <span className="flex-1 text-[11px] text-foreground truncate">
         {request.name}
       </span>
       <button
@@ -354,7 +354,7 @@ const RequestRow = memo(function RequestRow({
           onDelete();
         }}
         className="w-4 h-4 flex items-center justify-center
-          text-[var(--os-text-secondary)] hover:text-red-400
+          text-(--os-text-secondary) hover:text-red-400
           opacity-0 group-hover:opacity-100 transition-all cursor-pointer text-[10px]"
         title="Delete"
       >
