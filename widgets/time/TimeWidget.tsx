@@ -31,8 +31,14 @@ export default function TimeWidget({ timezone }: TimeWidgetProps) {
   const date = formatDate(now);
 
   return (
-    <div className="absolute top-6 left-6 z-20 pointer-events-none select-none">
-      <div className="backdrop-blur-md bg-white/5 px-5 py-3 rounded-2xl">
+    <div
+      className="absolute z-20 pointer-events-none select-none"
+      style={{
+        left: "var(--widget-edge-padding)",
+        top: "var(--widget-top-padding)",
+      }}
+    >
+      <div className="px-5 py-3 rounded-2xl">
         <div className="text-white text-3xl font-mono tracking-widest drop-shadow-sm">
           {time}
         </div>

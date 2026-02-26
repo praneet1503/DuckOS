@@ -75,6 +75,9 @@
   --dock-max-scale: 1.6;
   --dock-min-scale: 1;
   --dock-spread: 90px;
+  /* safe area padding for desktop widgets (left/right) */
+  --widget-edge-padding: 32px;
+  --widget-top-padding: 20px;
 }
 
 @theme inline {

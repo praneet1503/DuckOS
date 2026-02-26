@@ -99,6 +99,9 @@ export default function Dock() {
   // Interpolate padding: when maxScale = 1, use 8px (py-2); when maxScale = MAX_SCALE, expand
   const basePadding = 8; // py-2 = 8px
   const expandedPadding = basePadding + (maxScale - MIN_SCALE) * 6; // smooth expansion
+  // Horizontal safe padding
+  const baseHorizontalPadding = 32; // px
+  const expandedHorizontalPadding = baseHorizontalPadding + (maxScale - MIN_SCALE) * 8;
 
   return (
     <motion.div
@@ -111,13 +114,22 @@ export default function Dock() {
         setIsPointerOver(false);
         scheduleUpdate(null);
       }}
-      className="fixed bottom-4 left-1/2 z-9000 flex -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/10 bg-white/6 px-3 backdrop-blur-xl"
-      initial={{ y: 60, opacity: 0, paddingTop: basePadding, paddingBottom: basePadding }}
+      className="fixed bottom-4 left-1/2 z-9000 flex -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/10 bg-white/6 px-8 backdrop-blur-xl"
+      initial={{
+        y: 60,
+        opacity: 0,
+        paddingTop: basePadding,
+        paddingBottom: basePadding,
+        paddingLeft: baseHorizontalPadding,
+        paddingRight: baseHorizontalPadding,
+      }}
       animate={{
         y: 0,
         opacity: 1,
         paddingTop: expandedPadding,
         paddingBottom: expandedPadding,
+        paddingLeft: expandedHorizontalPadding,
+        paddingRight: expandedHorizontalPadding,
       }}
       transition={
         hasMounted
@@ -126,6 +138,9 @@ export default function Dock() {
       }
       style={{ zIndex: isPointerOver ? 10001 : undefined }}
     >
+      {/* Left separator spacer */}
+      <div className="h-6 w-0.5 rounded-full bg-white/15" />
+
       {registeredApps.map((app) => {
         const hasOpenWindow = openWindows.some((w) => w.appId === app.id);
         const Icon = app.icon;
@@ -163,6 +178,9 @@ export default function Dock() {
           </motion.button>
         );
       })}
+
+      {/* Right separator spacer */}
+      <div className="h-6 w-0.5 rounded-full bg-white/15" />
     </motion.div>
   );
 }
