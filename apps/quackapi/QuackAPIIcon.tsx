@@ -13,61 +13,29 @@ export default function QuackAPIIcon({ className }: { className?: string }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Duck head outline */}
-      <path
-        d="M12 3C7.5 3 4 7 4 11c0 2.5 1.2 4.7 3 6.2L6 20h12l-1-2.8c1.8-1.5 3-3.7 3-6.2 0-4-3.5-8-8-8z"
+      {/* Badge background */}
+      <rect x="1" y="1" width="22" height="22" rx="5" fill="currentColor" opacity="0.06" />
+      {/* Simplified duck head (distinct from QuackCode) */}
+      <circle
+        cx="9.2"
+        cy="10"
+        r="3"
         stroke="currentColor"
-        strokeWidth="1.2"
+        strokeWidth="1.1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         fill="none"
-        opacity="0.7"
       />
-      {/* Beak */}
-      <ellipse
-        cx="16"
-        cy="10.5"
-        rx="3"
-        ry="1.5"
-        stroke="currentColor"
-        strokeWidth="1"
-        fill="none"
-        opacity="0.5"
-      />
+      {/* Beak (filled) */}
+      <path d="M11.2 10.3l1.6.5-1.6.5z" fill="currentColor" />
       {/* Eye */}
-      <circle cx="10" cy="9.5" r="1.2" fill="currentColor" opacity="0.8" />
-      {/* Right arrow (request) */}
-      <path
-        d="M8 15.5l3 0"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        opacity="0.7"
-      />
-      <path
-        d="M10.2 14.3l1.3 1.2-1.3 1.2"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-        opacity="0.7"
-      />
-      {/* Left arrow (response) */}
-      <path
-        d="M16 17.5l-3 0"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
-      <path
-        d="M13.8 16.3l-1.3 1.2 1.3 1.2"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-        opacity="0.5"
-      />
+      <circle cx="8.2" cy="9.2" r="0.45" fill="currentColor" />
+      {/* Small network nodes to indicate API (top-right) */}
+      <circle cx="16.8" cy="8.8" r="0.6" fill="currentColor" />
+      <circle cx="18.6" cy="10.8" r="0.55" fill="currentColor" />
+      <circle cx="15.2" cy="11.6" r="0.5" fill="currentColor" />
+      <path d="M16.8 8.8L15.5 10.6" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
+      <path d="M16.8 8.8L18.1 10.2" stroke="currentColor" strokeWidth="0.9" strokeLinecap="round" />
     </svg>
   );
 }
