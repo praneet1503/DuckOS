@@ -41,6 +41,10 @@ export default function Background() {
         }}
       />
       <div
+        className="fixed inset-0 bg-black/25 pointer-events-none"
+        style={{ zIndex: -15 }}
+      />
+      <div
         ref={radialRef}
         className="pointer-events-none fixed inset-0 transition-opacity duration-300"
         style={{ zIndex: -10 }}

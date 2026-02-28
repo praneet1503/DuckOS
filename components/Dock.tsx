@@ -114,7 +114,7 @@ export default function Dock() {
         setIsPointerOver(false);
         scheduleUpdate(null);
       }}
-      className="fixed bottom-4 left-1/2 z-9000 flex -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/10 bg-white/6 px-8 backdrop-blur-xl"
+      className="fixed bottom-4 left-1/2 z-9000 flex -translate-x-1/2 items-center gap-2 rounded-3xl border border-white/20 bg-white/15 px-8 shadow-2xl backdrop-blur-xl"
       initial={{
         y: 60,
         opacity: 0,

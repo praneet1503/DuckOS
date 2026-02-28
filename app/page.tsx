@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
 import { useOSStore } from "@/core/os-store";
 import {
   registerApp,
@@ -19,8 +18,7 @@ import { QuackCodeApp, QuackCodeIcon } from "@/apps/quackcode";
 import { QuackAPIApp, QuackAPIIcon } from "@/apps/quackapi";
 import { ClockApp, ClockIcon } from "@/apps/clock";
 import { CalendarApp, CalendarIcon } from "@/apps/calendar";
-import BootScreen from "@/components/BootScreen";
-import Desktop from "@/components/Desktop";
+import OSRoot from "@/components/system/OSRoot";
 
 // ── One-time, module-level app registration ───────────────
 registerApp({
@@ -123,8 +121,6 @@ registerApp({
  * Root page — orchestrates boot → desktop transition.
  */
 export default function Home() {
-  const isBooted = useOSStore((s) => s.isBooted);
-  const boot = useOSStore((s) => s.boot);
   const storeRegister = useOSStore((s) => s.registerApp);
   const registeredApps = useOSStore((s) => s.registeredApps);
 
@@ -137,17 +133,5 @@ export default function Home() {
     }
   }, [registeredApps.length, storeRegister]);
 
-  function handleBootComplete() {
-    boot();
-  }
-
-  return (
-    <AnimatePresence mode="wait">
-      {!isBooted ? (
-        <BootScreen key="boot" onBootComplete={handleBootComplete} />
-      ) : (
-        <Desktop key="desktop" />
-      )}
-    </AnimatePresence>
-  );
+  return <OSRoot />;
 }
