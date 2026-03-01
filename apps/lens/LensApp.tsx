@@ -17,7 +17,6 @@ import {
   createFile,
   createFolder,
   getNodeByPath,
-  type FileNode,
 } from "@/core/vfs";
 
 /* ── constants ──────────────────── */
@@ -33,20 +32,6 @@ function basename(path: string) {
    ───────────────────────────────────────────────────── */
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
-
-function typeColor(val: JsonValue): string {
-  if (val === null) return "text-rose-300/70";
-  switch (typeof val) {
-    case "string":
-      return "text-emerald-300/80";
-    case "number":
-      return "text-amber-300/80";
-    case "boolean":
-      return "text-sky-300/80";
-    default:
-      return "text-white/60";
-  }
-}
 
 function typeBadge(val: JsonValue): string {
   if (val === null) return "null";
@@ -107,7 +92,7 @@ function JsonNode({
 
   return (
     <div style={{ paddingLeft: `${depth * 14}px` }}>
-      <div className="group flex items-center gap-1 py-[1px]">
+      <div className="group flex items-center gap-1 py-px">
         {/* expand toggle */}
         {isExpandable ? (
           <button
@@ -151,7 +136,7 @@ function JsonNode({
         {/* copy path button */}
         <button
           onClick={() => onCopyPath(path)}
-          className="ml-1 opacity-0 transition-opacity group-hover:opacity-60 hover:!opacity-100 text-[9px] text-white/40"
+          className="ml-1 opacity-0 transition-opacity group-hover:opacity-60 hover:opacity-100! text-[9px] text-white/40"
           title={`Copy path: ${path}`}
         >
           ⧉
@@ -190,7 +175,7 @@ function FilePicker({
   onNew: () => void;
 }) {
   return (
-    <aside className="flex w-44 shrink-0 flex-col border-r border-white/10 bg-white/[0.03]">
+    <aside className="flex w-44 shrink-0 flex-col border-r border-white/10 bg-white/3">
       <div className="flex items-center justify-between px-3 py-2">
         <span className="text-[10px] font-semibold uppercase tracking-widest text-white/30">
           JSON files
@@ -235,7 +220,6 @@ export default function LensApp() {
   const [rawContent, setRawContent] = useState("");
   const [saved, setSaved] = useState(true);
   const [mode, setMode] = useState<"tree" | "editor">("tree");
-  const [parseError, setParseError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -281,7 +265,6 @@ export default function LensApp() {
       setCurrentFile(path);
       setRawContent(text);
       setSaved(true);
-      setParseError(null);
     } catch {}
   }, []);
 
@@ -457,7 +440,7 @@ export default function LensApp() {
               title={saved ? "Saved" : "Unsaved"}
             />
             {currentFile && (
-              <span className="max-w-[120px] truncate">{basename(currentFile)}</span>
+              <span className="max-w-30 truncate">{basename(currentFile)}</span>
             )}
           </div>
         </div>

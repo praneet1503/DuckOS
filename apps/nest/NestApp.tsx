@@ -8,7 +8,6 @@ import {
   writeFile,
   readFile,
   deleteNode,
-  type FileNode,
 } from "@/core/vfs";
 
 /* ── helpers ─────────────────────────────────────── */

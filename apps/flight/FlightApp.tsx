@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useOSStore } from "@/core/os-store";
 
 export default function FlightApp() {

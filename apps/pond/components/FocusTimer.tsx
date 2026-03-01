@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { usePomodoro, type PomodoroMode } from "../hooks/usePomodoro";
 import ProgressRing from "./ProgressRing";
 import SessionControls from "./SessionControls";
 import FocusStats from "./FocusStats";
+import { useNotifications } from "@/store/useNotifications";
 
 /* ── Helpers ────────────────────────────────────────────── */
 
@@ -36,33 +37,26 @@ const MODE_COLORS: Record<PomodoroMode, string> = {
   long_break: "rgba(217,176,106,0.8)",
 };
 
-/* ── Notification helper ────────────────────────────────── */
-
-function notifySessionComplete(mode: PomodoroMode) {
-  if (typeof window === "undefined") return;
-
-  const message =
-    mode === "focus"
-      ? "Focus session complete. Time for a break."
-      : "Break over. Ready to focus?";
-
-  // Browser Notification API
-  if ("Notification" in window) {
-    if (Notification.permission === "granted") {
-      new Notification("Pond — Focus", { body: message, silent: true });
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then((perm) => {
-        if (perm === "granted") {
-          new Notification("Pond — Focus", { body: message, silent: true });
-        }
-      });
-    }
-  }
-}
-
 /* ── Component ──────────────────────────────────────────── */
 
 export default function FocusTimer() {
+  const pushNotification = useNotifications((state) => state.pushNotification);
+
+  const notifySessionComplete = useCallback(
+    (mode: PomodoroMode) => {
+      const message =
+        mode === "focus"
+          ? "Focus session complete. Time for a break."
+          : "Break over. Ready to focus?";
+
+      pushNotification({
+        title: "Pond — Focus",
+        message,
+      });
+    },
+    [pushNotification]
+  );
+
   const {
     timeLeft,
     isRunning,

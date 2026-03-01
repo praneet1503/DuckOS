@@ -1,27 +1,12 @@
 "use client";
-
 import { useState, useLayoutEffect } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence } from "framer-motion";
 import { useOSStore } from "@/core/os-store";
 import Window from "./Window";
-
-/**
- * WindowLayer — the global compositor surface for all windows.
- *
- * Rendered via React Portal into a dedicated `#window-layer` div on
- * document.body so that windows are fully isolated from layout reflows
- * in the Desktop / Dock / Background tree.
- *
- * The layer itself is position:fixed, covers the full viewport, and has
- * pointer-events:none.  Individual windows re-enable pointer-events.
- */
 export default function WindowLayer() {
   const openWindows = useOSStore((s) => s.openWindows);
   const [host, setHost] = useState<HTMLElement | null>(null);
-
-  // Create or find the portal mount point exactly once
-  // Use useLayoutEffect so the host is created before first render
   useLayoutEffect(() => {
     let el = document.getElementById("window-layer");
     let createdByUs = false;
@@ -32,18 +17,15 @@ export default function WindowLayer() {
       createdByUs = true;
     }
     setHost(el);
-
     return () => {
       if (createdByUs && el && el.parentNode) {
         el.parentNode.removeChild(el);
       }
     };
   }, []);
-
   if (!host) {
     return null;
   }
-
   return createPortal(
     <AnimatePresence mode="popLayout">
       {openWindows
@@ -55,3 +37,5 @@ export default function WindowLayer() {
     host
   );
 }
+
+// all cleared//

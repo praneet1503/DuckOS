@@ -40,17 +40,6 @@ export async function initCollectionsDir(): Promise<void> {
 }
 
 /**
- * Sanitize a collection name for use as a filename.
- */
-function toFileName(name: string): string {
-  return name
-    .replace(/[^a-zA-Z0-9 _-]/g, "")
-    .replace(/\s+/g, "-")
-    .toLowerCase()
-    .slice(0, 60);
-}
-
-/**
  * Build a file path for a collection.
  */
 function collectionPath(collection: Collection): string {

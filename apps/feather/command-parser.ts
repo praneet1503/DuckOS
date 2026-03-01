@@ -1,4 +1,4 @@
-import {initFileSystem,listDirectory,createFile,createFolder,readFile,deleteNode,moveNode,getNodeByPath,type FileNode,} from "@/core/vfs";
+import {listDirectory,createFile,createFolder,readFile,deleteNode,moveNode,getNodeByPath,} from "@/core/vfs";
 
 export type TerminalLinePayload = {
   type: "output" | "error";

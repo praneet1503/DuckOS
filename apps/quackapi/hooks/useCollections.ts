@@ -16,7 +16,6 @@ import {
   addRequestToCollection,
   updateRequestInCollection,
   deleteRequestFromCollection,
-  saveCollection,
 } from "../storage/collectionsStore";
 
 // we bundle a small starter set of endpoints so people can hit something right away

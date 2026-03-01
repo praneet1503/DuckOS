@@ -19,8 +19,9 @@ export function clampPosition(
   if (maxX < 0 || maxY < 0) {
     return { x: 0, y: 0 };
   }
-
   const x = Math.max(0, Math.min(pos.x, maxX));
   const y = Math.max(0, Math.min(pos.y, maxY));
   return { x, y };
 }
+
+// gen by AI, all cleared//

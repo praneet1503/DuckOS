@@ -10,15 +10,12 @@ const FIXED_USER: User = {
   username: "prentz",
   avatar: "🦆",
 };
-
 const CORRECT_PASSWORD = "59";
-
-export const useAuth = create<AuthState & AuthActions>()((set, get) => {
+export const useAuth = create<AuthState & AuthActions>()((set) => {
   return {
     currentUser: null,
     loading: false,
     error: null,
-
     login: async (password) => {
       set({ loading: true, error: null });
       if (password === CORRECT_PASSWORD) {
@@ -29,21 +26,17 @@ export const useAuth = create<AuthState & AuthActions>()((set, get) => {
       set({ loading: false, error: "Incorrect password." });
       return false;
     },
-
     logout: () => {
       set({ currentUser: null, error: null });
       useScreen.getState().setScreen("lock");
     },
-
     lock: () => {
       set({ currentUser: null, error: null });
       useScreen.getState().setScreen("lock");
     },
-
     autoLogin: () => {
-      // no persistence, nothing to do
+      // does auto login by checking for a seesion similar to a cookie basically
     },
-// for dumb people who don't know how to check browser console for hints
     bypassLogin: () => {
       set({ currentUser: FIXED_USER, error: null });
       useScreen.getState().setScreen("desktop");
@@ -51,3 +44,5 @@ export const useAuth = create<AuthState & AuthActions>()((set, get) => {
     clearError: () => set({ error: null }),
   };
 });
+
+//all cleared//

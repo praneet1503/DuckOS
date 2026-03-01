@@ -21,7 +21,6 @@ import {
   createFile,
   createFolder,
   getNodeByPath,
-  type FileNode,
 } from "@/core/vfs";
 
 /* ── constants ──────────────────── */
@@ -73,7 +72,7 @@ function FilePicker({
   onNew: () => void;
 }) {
   return (
-    <aside className="flex w-44 shrink-0 flex-col border-r border-white/10 bg-white/[0.03]">
+    <aside className="flex w-44 shrink-0 flex-col border-r border-white/10 bg-white/3">
       <div className="flex items-center justify-between px-3 py-2">
         <span className="text-[10px] font-semibold uppercase tracking-widest text-white/30">
           Files
@@ -362,7 +361,7 @@ export default function QuillApp() {
               title={saved ? "Saved" : "Unsaved"}
             />
             {currentFile && (
-              <span className="max-w-[120px] truncate">{basename(currentFile)}</span>
+              <span className="max-w-30 truncate">{basename(currentFile)}</span>
             )}
           </div>
         </div>

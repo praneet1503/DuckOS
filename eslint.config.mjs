@@ -15,3 +15,5 @@ const eslintConfig = defineConfig([
 ]);
 
 export default eslintConfig;
+
+// all cleared//

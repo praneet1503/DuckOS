@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useOSStore } from "@/core/os-store";
@@ -10,14 +9,6 @@ import { clampPosition } from "@/core/window-manager";
 interface WindowProps {
   win: WindowInstance;
 }
-
-/**
- * Single composited window — draggable, focusable, animate in/out,
- * glassmorphism chrome with soft shadow depth changes.
- *
- * Positioning uses ONLY translate3d — never top/left.
- * Each window is position:fixed inside the global WindowLayer portal.
- */
 function WindowInner({ win }: WindowProps) {
   const closeWindow = useOSStore((s) => s.closeWindow);
   const focusWindow = useOSStore((s) => s.focusWindow);
@@ -25,19 +16,14 @@ function WindowInner({ win }: WindowProps) {
   const toggleMaximizeWindow = useOSStore((s) => s.toggleMaximizeWindow);
   const updateWindowPosition = useOSStore((s) => s.updateWindowPosition);
   const focusedWindowId = useOSStore((s) => s.focusedWindowId);
-
   const isFocused = focusedWindowId === win.id;
-  const app = getAppById(win.appId);
-
-  // ── Drag hook ──────────────────────────────────────────
+  const app = getAppById(win.appId)
   const getPosition = useCallback(
     () => win.position,
     [win.position]
   );
-
   const onDragEnd = useCallback(
     (x: number, y: number) => {
-      // always clamp synchronously — window manager is imported statically
       if (typeof window !== "undefined") {
         const { width, height } = win.size;
         const vp = { width: window.innerWidth, height: window.innerHeight };
@@ -49,22 +35,14 @@ function WindowInner({ win }: WindowProps) {
     },
     [updateWindowPosition, win.id, win.size]
   );
-
   const { elRef, onPointerDown: onTitlePointerDown } = useDrag({
     onDragEnd,
     getPosition,
     disabled: win.isMaximized,
   });
-
-  // Note: low-level pointer lifecycle is handled by `useDrag` hook.
-
-
-  // Keep for focus on window click (not drag)
   const handlePointerDown = useCallback(() => {
     if (!isFocused) focusWindow(win.id);
   }, [isFocused, focusWindow, win.id]);
-
-  // Combined handler for title bar: focus + start drag
   const handleTitlePointerDown = useCallback(
     (e: React.PointerEvent) => {
       handlePointerDown();
@@ -72,32 +50,14 @@ function WindowInner({ win }: WindowProps) {
     },
     [handlePointerDown, onTitlePointerDown]
   );
-
   const AppComponent = useMemo(() => app?.component ?? null, [app]);
-
   if (!app || !AppComponent) return null;
-
-  // ── Positioning via translate3d only ───────────────────
   const posX = win.isMaximized ? 0 : win.position.x;
   const posY = win.isMaximized ? 0 : win.position.y;
   const w = win.isMaximized ? "100vw" : win.size.width;
   const h = win.isMaximized ? "100vh" : win.size.height;
-
   return (
-    <motion.div
-      ref={elRef}
-      className="window-shell"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: w,
-        height: h,
-        zIndex: win.zIndex,
-        x: posX,
-        y: posY,
-        pointerEvents: "auto",
-      }}
+    <motion.div ref={elRef} className="window-shell"style={{position: "fixed",top: 0,left: 0,width: w,height: h,zIndex: win.zIndex,x: posX,y: posY,pointerEvents: "auto", }}
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{
         opacity: win.isMinimized ? 0 : 1,
@@ -115,13 +75,11 @@ function WindowInner({ win }: WindowProps) {
               : "border-white/10 bg-white/4 shadow-[0_4px_20px_rgba(0,0,0,0.35)]"
           }`}
       >
-        {/* ── Title bar ───────────────────────────── */}
         <div
           onPointerDown={handleTitlePointerDown}
           className="flex h-10 shrink-0 cursor-grab items-center justify-between px-3 active:cursor-grabbing"
           style={{ userSelect: "none" }}
         >
-          {/* Traffic lights */}
           <div className="flex items-center gap-2">
             <button
               onPointerDown={(e) => e.stopPropagation()}
@@ -154,19 +112,14 @@ function WindowInner({ win }: WindowProps) {
               <span className="text-[8px] font-bold text-black leading-none">+</span>
             </button>
           </div>
-
           <span
             className="text-xs font-medium text-white/50 select-none pointer-events-none"
             style={{ userSelect: "none" }}
           >
             {app.name}
           </span>
-
-          {/* Spacer to balance the title */}
           <div className="w-13" />
         </div>
-
-        {/* ── Content area ────────────────────────── */}
         <div className="flex-1 overflow-auto">
           <AppComponent />
         </div>
@@ -174,6 +127,7 @@ function WindowInner({ win }: WindowProps) {
     </motion.div>
   );
 }
-
 const Window = React.memo(WindowInner);
 export default Window;
+
+// all cleared//

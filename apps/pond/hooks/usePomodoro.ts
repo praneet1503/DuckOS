@@ -64,19 +64,6 @@ function saveState(s: PersistedState): void {
   }
 }
 
-function durationForMode(mode: PomodoroMode): number {
-  switch (mode) {
-    case "focus":
-      return FOCUS_DURATION;
-    case "short_break":
-      return SHORT_BREAK_DURATION;
-    case "long_break":
-      return LONG_BREAK_DURATION;
-    default:
-      return FOCUS_DURATION;
-  }
-}
-
 /* ── Hook ───────────────────────────────────────────────── */
 
 export function usePomodoro(
