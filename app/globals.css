@@ -183,6 +183,14 @@ button {
   user-select: none;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   Z-Index Scale (root stacking context)
+   ─────────────────────────────────────────────────────────
+     0    DesktopScreen (base compositor surface)
+    50    #window-layer (portal-mounted window compositor)
+   100    Screen overlays (Boot, Lock)
+   ═══════════════════════════════════════════════════════ */
+
 /* ── Global window layer (portal mount) ────────────────── */
 /* Window layer: contains composited windows; it sits above the
    desktop but does not itself capture pointer events. */
@@ -190,6 +198,6 @@ button {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 10000;
+  z-index: 50;
   overflow: visible;
 }

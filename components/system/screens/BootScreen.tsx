@@ -28,7 +28,7 @@ export default function BootScreen() {
   return (
     <motion.div
       key="boot"
-      className="fixed inset-0 z-9999 flex flex-col items-center justify-center gap-8 bg-[#0b0e14] select-none cursor-default"
+      className="fixed inset-0 z-100 flex flex-col items-center justify-center gap-8 bg-[#0b0e14] select-none cursor-default"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}

@@ -114,7 +114,7 @@ export default function Dock() {
         setIsPointerOver(false);
         scheduleUpdate(null);
       }}
-      className="fixed bottom-4 left-1/2 z-9000 flex -translate-x-1/2 items-center gap-2 rounded-3xl border border-white/20 bg-white/15 px-8 shadow-2xl backdrop-blur-xl"
+      className="fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-3xl border border-white/20 bg-white/15 px-8 shadow-2xl backdrop-blur-xl"
       initial={{
         y: 60,
         opacity: 0,
@@ -136,7 +136,7 @@ export default function Dock() {
           ? { type: "spring", stiffness: 350, damping: 35 }
           : { delay: 0.3, duration: 0.5, ease: [0.4, 0, 0.2, 1] }
       }
-      style={{ zIndex: isPointerOver ? 10001 : undefined }}
+      style={{ zIndex: isPointerOver ? 45 : undefined }}
     >
       {/* Left separator spacer */}
       <div className="h-6 w-0.5 rounded-full bg-white/15" />

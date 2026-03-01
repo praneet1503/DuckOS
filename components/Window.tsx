@@ -86,7 +86,7 @@ function WindowInner({ win }: WindowProps) {
   return (
     <motion.div
       ref={elRef}
-      className={`absolute window-shell`}
+      className="window-shell"
       style={{
         position: "fixed",
         top: 0,

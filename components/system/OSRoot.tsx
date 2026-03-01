@@ -19,13 +19,11 @@ export default function OSRoot() {
   const current = useScreen((s) => s.current);
   const setScreen = useScreen((s) => s.setScreen);
   const autoLogin = useAuth((s) => s.autoLogin);
-  const loadUsers = useAuth((s) => s.loadUsers);
   const currentUser = useAuth((s) => s.currentUser);
 
   useEffect(() => {
-    loadUsers();
     autoLogin();
-  }, [autoLogin, loadUsers]);
+  }, [autoLogin]);
 
   useEffect(() => {
     if (current === "boot") return;
