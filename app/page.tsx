@@ -124,6 +124,11 @@ export default function Home() {
   const storeRegister = useOSStore((s) => s.registerApp);
   const registeredApps = useOSStore((s) => s.registeredApps);
 
+  // Log on client load
+  useEffect(() => {
+    console.log("59");
+  }, []);
+
   // Sync registry → Zustand store (idempotent)
   useEffect(() => {
     if (registeredApps.length === 0) {

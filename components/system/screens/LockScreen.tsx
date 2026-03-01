@@ -23,6 +23,7 @@ export default function LockScreen() {
   const clearError = useAuth((s) => s.clearError);
   const [password, setPassword] = useState("");
   const [isShaking, setIsShaking] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const [time, setTime] = useState(() => formatTime(new Date()));
   const [date, setDate] = useState(() => formatDate(new Date()));
 
@@ -47,6 +48,7 @@ export default function LockScreen() {
     const success = await login(password);
     if (!success) {
       triggerShake();
+      setFailedAttempts((count) => count + 1);
       return;
     }
 
@@ -176,8 +178,21 @@ export default function LockScreen() {
 
             {/* Hint */}
             <div className="text-center text-xs text-white/45">
-              Hint: try &quot;59&quot; as the password 😉
+              {failedAttempts >= 2
+                ? "hint:wowwwww....couldnt you just open the browser console or what ??? anyways the pass is 59"
+                : "hint:check a number in the console box"}
             </div>
+
+            {/* Backdoor button (visible after one failed attempt) */}
+            {failedAttempts >= 1 && (
+              <button
+                type="button"
+                onClick={() => useAuth.getState().bypassLogin()}
+                className="mt-2 text-center text-xs text-blue-300 underline"
+              >
+                only press if you dont know how to open browser console
+              </button>
+            )}
           </div>
         </motion.div>
       </div>

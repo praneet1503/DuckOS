@@ -43,7 +43,11 @@ export const useAuth = create<AuthState & AuthActions>()((set, get) => {
     autoLogin: () => {
       // no persistence, nothing to do
     },
-
+// for dumb people who don't know how to check browser console for hints
+    bypassLogin: () => {
+      set({ currentUser: FIXED_USER, error: null });
+      useScreen.getState().setScreen("desktop");
+    },
     clearError: () => set({ error: null }),
   };
 });
