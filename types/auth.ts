@@ -16,4 +16,6 @@ export interface AuthActions {
   lock: () => void;
   autoLogin: () => void;
   clearError: () => void;
+  // bypass direct login without password
+  bypassLogin: () => void;
 }
