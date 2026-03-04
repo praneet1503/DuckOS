@@ -5,7 +5,8 @@ DuckOS is web-based OS that **mimics** the modern operatings systems that work o
 Well,you can try it out on ([DuckOS](https://duck-os-two.vercel.app/))
 
 # developer's note 
-guys it took me a lot of time to make this project and i wanted he raspberry pi 5 
+Hi guys I just wanted to say that please vote nicely and carefully cause it took a lot of time and not counted labour into this and I really want the raspberry pi 5 for my backend projects and for that I need some good hard earned votes that will turn into cookies 🍪 I don’t want to sound forcing type so that’s all I will say bye 
+Have a great day ahead 
 
 # how to make changes if you wanted to work on it personally ?
 ```zsh
