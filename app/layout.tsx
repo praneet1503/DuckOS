@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+import MobileWarning from "@/components/MobileWarning";
 
 export const metadata: Metadata = {
   title: "Duck OS",
@@ -32,6 +33,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased text-white">
+        <MobileWarning />
         {children}
         <Analytics />
       </body>
