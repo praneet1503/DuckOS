@@ -17,15 +17,15 @@ function QAInput({
     <input
       className={`
         w-full px-2.5 py-1.5 rounded
-        bg-white/5 text-[var(--os-text-primary)]
+        bg-white/5 text-foreground
         border outline-none transition-all duration-150
-        placeholder:text-[var(--os-text-secondary)]
+        placeholder:text-(--os-text-secondary)
         text-[13px]
         ${mono ? "font-mono" : ""}
         ${
           error
             ? "border-red-500/60 focus:border-red-400"
-            : "border-[var(--os-border)] focus:border-[var(--os-accent-teal)]/60"
+            : "border-(--os-border) focus:border-(--os-accent-teal)/60"
         }
         ${className}
       `}
